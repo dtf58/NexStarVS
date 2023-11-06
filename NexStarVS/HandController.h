@@ -1,5 +1,6 @@
 #include <iostream>
 #include <array>
+#include "ConvertNexStar.h"
 using namespace std;
 #using <System.dll>
 
@@ -8,11 +9,6 @@ using namespace System::IO::Ports;
 using namespace System::Threading;
 
 #pragma once
-#if 0
-bool startSerial();
-
-
-#else
 ref class HandController
 {
 public:
@@ -22,9 +18,11 @@ public:
 	void close();
 	void transmit(int length, cli::array<unsigned char> ^buffer);
 	int receive(unsigned char * buffer);
+	String^ sendAndReceive(String^ command);
 
 
 	bool flagSerial;
 	SerialPort^ myPort;
+
+	ConvertNexStar* convNS;
 };
-#endif

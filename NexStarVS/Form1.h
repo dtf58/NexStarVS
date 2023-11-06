@@ -34,6 +34,8 @@ namespace CppCLRWinFormsProject {
 	private: System::Windows::Forms::ListBox^ listComPorts;
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ Output;
+	private: System::Windows::Forms::ListBox^ listGetBox;
+	private: System::Windows::Forms::Button^ buttonGet;
 
 	protected:
 
@@ -55,6 +57,8 @@ namespace CppCLRWinFormsProject {
 			this->listComPorts = (gcnew System::Windows::Forms::ListBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->Output = (gcnew System::Windows::Forms::Label());
+			this->listGetBox = (gcnew System::Windows::Forms::ListBox());
+			this->buttonGet = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// button1
@@ -69,7 +73,7 @@ namespace CppCLRWinFormsProject {
 			// 
 			// OutputBox
 			// 
-			this->OutputBox->Location = System::Drawing::Point(65, 148);
+			this->OutputBox->Location = System::Drawing::Point(65, 457);
 			this->OutputBox->Multiline = true;
 			this->OutputBox->Name = L"OutputBox";
 			this->OutputBox->Size = System::Drawing::Size(468, 212);
@@ -99,17 +103,39 @@ namespace CppCLRWinFormsProject {
 			// Output
 			// 
 			this->Output->AutoSize = true;
-			this->Output->Location = System::Drawing::Point(65, 126);
+			this->Output->Location = System::Drawing::Point(65, 438);
 			this->Output->Name = L"Output";
 			this->Output->Size = System::Drawing::Size(45, 16);
 			this->Output->TabIndex = 4;
 			this->Output->Text = L"Output";
 			// 
+			// listGetBox
+			// 
+			this->listGetBox->FormattingEnabled = true;
+			this->listGetBox->ItemHeight = 16;
+			this->listGetBox->Location = System::Drawing::Point(68, 131);
+			this->listGetBox->Name = L"listGetBox";
+			this->listGetBox->ScrollAlwaysVisible = true;
+			this->listGetBox->Size = System::Drawing::Size(189, 84);
+			this->listGetBox->TabIndex = 5;
+			// 
+			// buttonGet
+			// 
+			this->buttonGet->Location = System::Drawing::Point(294, 131);
+			this->buttonGet->Name = L"buttonGet";
+			this->buttonGet->Size = System::Drawing::Size(82, 23);
+			this->buttonGet->TabIndex = 6;
+			this->buttonGet->Text = L"Get";
+			this->buttonGet->UseVisualStyleBackColor = true;
+			this->buttonGet->Click += gcnew System::EventHandler(this, &Form1::buttonGet_Click);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(630, 406);
+			this->ClientSize = System::Drawing::Size(1003, 777);
+			this->Controls->Add(this->buttonGet);
+			this->Controls->Add(this->listGetBox);
 			this->Controls->Add(this->Output);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->listComPorts);
@@ -125,5 +151,6 @@ namespace CppCLRWinFormsProject {
 	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void OutputBox_TextChanged(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e);
-	};
+	private: System::Void buttonGet_Click(System::Object^ sender, System::EventArgs^ e);
+};
 }

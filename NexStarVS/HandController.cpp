@@ -1,41 +1,12 @@
 
 #include "pch.h"
 #include "HandController.h"
-#if 0
-#include <iostream>
-using namespace std;
-#using <System.dll>
 
-using namespace System;
-using namespace System::IO::Ports;
-using namespace System::Threading;
-#endif
-
-#if 0
-bool startSerial()
+HandController::HandController(System::String ^port):
+	flagSerial(false)
 {
-	bool flagSerial = true;
-	SerialPort^myPort = gcnew SerialPort("COM5");
-	myPort->BaudRate = 9600;
-//	myPort->StopBits(1);
-	try
-	{
-		myPort->Open();
-	}
-	catch (...)
-	{
-		flagSerial = false;
-	}
-	return flagSerial;
-}
-
-
-#else
-HandController::HandController(System::String ^port)
-{
-	flagSerial = false;
 	myPort = gcnew SerialPort(port, 9600, Parity::None, 8, StopBits::One );
-
+	convNS = new ConvertNexStar();
 }
 
 HandController::~HandController()
@@ -100,6 +71,31 @@ int HandController::receive(unsigned char* buffer)
 	return count;
 }
 
+String^ HandController::sendAndReceive(String^ command)
+{
+		cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
+		sb[0] = (unsigned char)command[0];
+		transmit(1, sb);
+		unsigned char eb[32];
+		int length = receive(eb);
 
-#endif
+		String^ strReturn = gcnew String("");
 
+		if (convNS->convertReceive(sb[0], eb))
+		{
+			switch (sb[0])
+			{
+			case 'V': strReturn = String::Format("Version: {0}.{1}\r\n", convNS->firstVersion, convNS->secondVersion);
+				break;
+			case 'h': strReturn = String::Format("HC DateTime: {0,4:0000}-{1,2:00}-{2,2:00} {3,2:00}:{4,2:00}:{5,2:00} GMT+{6} SummerTime:{7}\r\n",
+				convNS->hcYear, convNS->hcMonth, convNS->hcDay, convNS->hcHour, convNS->hcMinutes, convNS->hcSeconds, convNS->hcOffsetGMT, convNS->hcSummerTime);
+				break;
+			}
+
+		}
+		else
+		{
+			strReturn = String::Format("Answer: {0} Bytes\r\n", length);
+		}
+		return strReturn;
+	}

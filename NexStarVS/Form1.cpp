@@ -3,7 +3,8 @@
 
 namespace CppCLRWinFormsProject {
 
-	Form1::Form1(void)
+	Form1::Form1(void):
+		hc(nullptr)
 	{
 		InitializeComponent();
 		//
@@ -13,6 +14,15 @@ namespace CppCLRWinFormsProject {
 		{
 			listComPorts->Items->Add(s);
 		}
+		listGetBox->Items->Add("e RA/DEC");
+		listGetBox->Items->Add("z AZM-ALT");
+		listGetBox->Items->Add("t Tracking Mode");
+		listGetBox->Items->Add("w Location");
+		listGetBox->Items->Add("h Time");
+		listGetBox->Items->Add("V Version");
+
+		buttonGet->Enabled = false;
+
 	}
 
 	Form1::~Form1()
@@ -21,27 +31,40 @@ namespace CppCLRWinFormsProject {
 		{
 			delete components;
 		}
+		if (nullptr != hc && hc->flagSerial)
+		{
+			hc->close();
+		}
 	}
 
     Void Form1::button1_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
-		String ^port = listComPorts->SelectedItem->ToString();
-	    hc = gcnew HandController(port);
-	    hc->open();
-	    if (hc->flagSerial)
-		    OutputBox->AppendText("Hallo Welt!\r\n");
-	    else
-		    OutputBox->AppendText("Scheisse\r\n");
+		if (nullptr == hc)
+		{
+			String^ port = listComPorts->SelectedItem->ToString();
+			hc = gcnew HandController(port);
+			hc->open();
+			if (hc->flagSerial)
+			{
+				OutputBox->AppendText("Connection opened!\r\n");
+				buttonGet->Enabled = true;
+				button1->Text = "Disconnect";
+			}
+			else
+			{
+				OutputBox->AppendText("Connection error\r\n");
+			}
+		}
+		else
+		{
+			hc->close();
+			delete hc;
+			hc = nullptr;
+			button1->Text = "Connect";
+			buttonGet->Enabled = false;
+			OutputBox->AppendText("Connection closed!\r\n");
+		}
 
-     	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
-	    sb[0] = 'V';
-	    hc->transmit(1, sb);
-	    unsigned char eb[32];
-	    int length = hc->receive(eb);
-
-	    OutputBox->AppendText(String::Format("Length: {0}\r\n", length));
-		String^ version = String::Format("Version: {0}.{1}\r\n", eb[0], eb[1]);
-		OutputBox->AppendText(version);
     }
 
 	Void Form1::OutputBox_TextChanged(System::Object^ sender, System::EventArgs^ e)
@@ -52,5 +75,22 @@ namespace CppCLRWinFormsProject {
     Void Form1::label1_Click(System::Object^ sender, System::EventArgs^ e) {
     }
 
+	Void Form1::buttonGet_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (nullptr == hc)
+		{
+			OutputBox->AppendText("Connection is not established\r\n");
+			return;
+		}
+		if (!hc->flagSerial)
+		{
+			OutputBox->AppendText("Connection is not established\r\n");
+			return;
+		}
+		String^ command = listGetBox->SelectedItem->ToString();
+		String^ receive = hc->sendAndReceive(command);
+		OutputBox->AppendText(receive);
+
+    }
 
 }
