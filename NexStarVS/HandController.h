@@ -19,6 +19,7 @@ public:
 	void transmit(int length, cli::array<unsigned char> ^buffer);
 	int receive(unsigned char * buffer);
 	String^ sendAndReceive(String^ command);
+	void setTime(int diffUtm, bool summerTime);
 
 
 	bool flagSerial;

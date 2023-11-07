@@ -36,6 +36,27 @@ namespace CppCLRWinFormsProject {
 	private: System::Windows::Forms::Label^ Output;
 	private: System::Windows::Forms::ListBox^ listGetBox;
 	private: System::Windows::Forms::Button^ buttonGet;
+	private: System::Windows::Forms::Label^ label2;
+	private: System::Windows::Forms::CheckBox^ checkSummer;
+	private: System::Windows::Forms::ComboBox^ UtmDistance;
+	private: System::Windows::Forms::Label^ label3;
+	private: System::Windows::Forms::Button^ SetTime;
+	private: System::Windows::Forms::TextBox^ longitude;
+	private: System::Windows::Forms::RadioButton^ longEast;
+	private: System::Windows::Forms::RadioButton^ longWest;
+	private: System::Windows::Forms::GroupBox^ EastWest;
+
+	private: System::Windows::Forms::TextBox^ latitude;
+	private: System::Windows::Forms::Label^ label4;
+	private: System::Windows::Forms::Label^ label5;
+	private: System::Windows::Forms::GroupBox^ Hemis;
+	private: System::Windows::Forms::RadioButton^ latSouth;
+	private: System::Windows::Forms::RadioButton^ latNorth;
+	private: System::Windows::Forms::Button^ setLoc;
+
+
+
+
 
 	protected:
 
@@ -59,6 +80,24 @@ namespace CppCLRWinFormsProject {
 			this->Output = (gcnew System::Windows::Forms::Label());
 			this->listGetBox = (gcnew System::Windows::Forms::ListBox());
 			this->buttonGet = (gcnew System::Windows::Forms::Button());
+			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->checkSummer = (gcnew System::Windows::Forms::CheckBox());
+			this->UtmDistance = (gcnew System::Windows::Forms::ComboBox());
+			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->SetTime = (gcnew System::Windows::Forms::Button());
+			this->longitude = (gcnew System::Windows::Forms::TextBox());
+			this->longEast = (gcnew System::Windows::Forms::RadioButton());
+			this->longWest = (gcnew System::Windows::Forms::RadioButton());
+			this->EastWest = (gcnew System::Windows::Forms::GroupBox());
+			this->latitude = (gcnew System::Windows::Forms::TextBox());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->Hemis = (gcnew System::Windows::Forms::GroupBox());
+			this->latSouth = (gcnew System::Windows::Forms::RadioButton());
+			this->latNorth = (gcnew System::Windows::Forms::RadioButton());
+			this->setLoc = (gcnew System::Windows::Forms::Button());
+			this->EastWest->SuspendLayout();
+			this->Hemis->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// button1
@@ -129,11 +168,181 @@ namespace CppCLRWinFormsProject {
 			this->buttonGet->UseVisualStyleBackColor = true;
 			this->buttonGet->Click += gcnew System::EventHandler(this, &Form1::buttonGet_Click);
 			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(68, 114);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(96, 16);
+			this->label2->TabIndex = 7;
+			this->label2->Text = L"Get Information";
+			// 
+			// checkSummer
+			// 
+			this->checkSummer->AutoSize = true;
+			this->checkSummer->Location = System::Drawing::Point(161, 245);
+			this->checkSummer->Name = L"checkSummer";
+			this->checkSummer->Size = System::Drawing::Size(105, 20);
+			this->checkSummer->TabIndex = 8;
+			this->checkSummer->Text = L"Sommertime";
+			this->checkSummer->UseVisualStyleBackColor = true;
+			// 
+			// UtmDistance
+			// 
+			this->UtmDistance->FormattingEnabled = true;
+			this->UtmDistance->Items->AddRange(gcnew cli::array< System::Object^  >(25) {
+				L"-12", L"-11", L"-10", L"-9", L"-8", L"-7",
+					L"-6", L"-5", L"-4", L"-3", L"-2", L"-1", L"0", L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8", L"9", L"10", L"11", L"12"
+			});
+			this->UtmDistance->Location = System::Drawing::Point(65, 245);
+			this->UtmDistance->Name = L"UtmDistance";
+			this->UtmDistance->Size = System::Drawing::Size(90, 24);
+			this->UtmDistance->TabIndex = 9;
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(65, 231);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(78, 16);
+			this->label3->TabIndex = 10;
+			this->label3->Text = L"Zone UTM+";
+			// 
+			// SetTime
+			// 
+			this->SetTime->Location = System::Drawing::Point(294, 245);
+			this->SetTime->Name = L"SetTime";
+			this->SetTime->Size = System::Drawing::Size(96, 23);
+			this->SetTime->TabIndex = 11;
+			this->SetTime->Text = L"Set Time";
+			this->SetTime->UseVisualStyleBackColor = true;
+			this->SetTime->Click += gcnew System::EventHandler(this, &Form1::SetTime_Click);
+			// 
+			// longitude
+			// 
+			this->longitude->Location = System::Drawing::Point(65, 304);
+			this->longitude->Name = L"longitude";
+			this->longitude->Size = System::Drawing::Size(100, 22);
+			this->longitude->TabIndex = 12;
+			// 
+			// longEast
+			// 
+			this->longEast->AutoSize = true;
+			this->longEast->Location = System::Drawing::Point(12, 14);
+			this->longEast->Name = L"longEast";
+			this->longEast->Size = System::Drawing::Size(55, 20);
+			this->longEast->TabIndex = 13;
+			this->longEast->TabStop = true;
+			this->longEast->Text = L"East";
+			this->longEast->UseVisualStyleBackColor = true;
+			// 
+			// longWest
+			// 
+			this->longWest->AutoSize = true;
+			this->longWest->Location = System::Drawing::Point(8, 40);
+			this->longWest->Name = L"longWest";
+			this->longWest->Size = System::Drawing::Size(59, 20);
+			this->longWest->TabIndex = 14;
+			this->longWest->TabStop = true;
+			this->longWest->Text = L"West";
+			this->longWest->UseVisualStyleBackColor = true;
+			// 
+			// EastWest
+			// 
+			this->EastWest->Controls->Add(this->longEast);
+			this->EastWest->Controls->Add(this->longWest);
+			this->EastWest->Location = System::Drawing::Point(190, 292);
+			this->EastWest->Name = L"EastWest";
+			this->EastWest->Size = System::Drawing::Size(94, 76);
+			this->EastWest->TabIndex = 15;
+			this->EastWest->TabStop = false;
+			this->EastWest->Text = L" ";
+			// 
+			// latitude
+			// 
+			this->latitude->Location = System::Drawing::Point(306, 304);
+			this->latitude->Name = L"latitude";
+			this->latitude->Size = System::Drawing::Size(100, 22);
+			this->latitude->TabIndex = 16;
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(65, 282);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(66, 16);
+			this->label4->TabIndex = 17;
+			this->label4->Text = L"Longitude";
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Location = System::Drawing::Point(306, 282);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(54, 16);
+			this->label5->TabIndex = 18;
+			this->label5->Text = L"Latitude";
+			// 
+			// Hemis
+			// 
+			this->Hemis->Controls->Add(this->latSouth);
+			this->Hemis->Controls->Add(this->latNorth);
+			this->Hemis->Location = System::Drawing::Point(413, 292);
+			this->Hemis->Name = L"Hemis";
+			this->Hemis->Size = System::Drawing::Size(92, 60);
+			this->Hemis->TabIndex = 19;
+			this->Hemis->TabStop = false;
+			this->Hemis->Text = L" ";
+			// 
+			// latSouth
+			// 
+			this->latSouth->AutoSize = true;
+			this->latSouth->Location = System::Drawing::Point(18, 40);
+			this->latSouth->Name = L"latSouth";
+			this->latSouth->Size = System::Drawing::Size(62, 20);
+			this->latSouth->TabIndex = 1;
+			this->latSouth->TabStop = true;
+			this->latSouth->Text = L"South";
+			this->latSouth->UseVisualStyleBackColor = true;
+			// 
+			// latNorth
+			// 
+			this->latNorth->AutoSize = true;
+			this->latNorth->Location = System::Drawing::Point(18, 13);
+			this->latNorth->Name = L"latNorth";
+			this->latNorth->Size = System::Drawing::Size(60, 20);
+			this->latNorth->TabIndex = 0;
+			this->latNorth->TabStop = true;
+			this->latNorth->Text = L"North";
+			this->latNorth->UseVisualStyleBackColor = true;
+			// 
+			// setLoc
+			// 
+			this->setLoc->Location = System::Drawing::Point(557, 304);
+			this->setLoc->Name = L"setLoc";
+			this->setLoc->Size = System::Drawing::Size(151, 23);
+			this->setLoc->TabIndex = 20;
+			this->setLoc->Text = L"Set Location";
+			this->setLoc->UseVisualStyleBackColor = true;
+			this->setLoc->Click += gcnew System::EventHandler(this, &Form1::setLoc_Click);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1003, 777);
+			this->Controls->Add(this->setLoc);
+			this->Controls->Add(this->Hemis);
+			this->Controls->Add(this->label5);
+			this->Controls->Add(this->label4);
+			this->Controls->Add(this->latitude);
+			this->Controls->Add(this->EastWest);
+			this->Controls->Add(this->longitude);
+			this->Controls->Add(this->SetTime);
+			this->Controls->Add(this->label3);
+			this->Controls->Add(this->UtmDistance);
+			this->Controls->Add(this->checkSummer);
+			this->Controls->Add(this->label2);
 			this->Controls->Add(this->buttonGet);
 			this->Controls->Add(this->listGetBox);
 			this->Controls->Add(this->Output);
@@ -143,6 +352,10 @@ namespace CppCLRWinFormsProject {
 			this->Controls->Add(this->button1);
 			this->Name = L"Form1";
 			this->Text = L"NexStar SLT Tool";
+			this->EastWest->ResumeLayout(false);
+			this->EastWest->PerformLayout();
+			this->Hemis->ResumeLayout(false);
+			this->Hemis->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -152,5 +365,7 @@ namespace CppCLRWinFormsProject {
 	private: System::Void OutputBox_TextChanged(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void buttonGet_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void SetTime_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void setLoc_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }

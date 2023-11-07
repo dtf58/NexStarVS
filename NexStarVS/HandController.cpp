@@ -1,6 +1,7 @@
 
 #include "pch.h"
 #include "HandController.h"
+#include <ctime>
 
 HandController::HandController(System::String ^port):
 	flagSerial(false)
@@ -73,7 +74,7 @@ int HandController::receive(unsigned char* buffer)
 
 String^ HandController::sendAndReceive(String^ command)
 {
-		cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
+		cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(8);
 		sb[0] = (unsigned char)command[0];
 		transmit(1, sb);
 		unsigned char eb[32];
@@ -87,8 +88,28 @@ String^ HandController::sendAndReceive(String^ command)
 			{
 			case 'V': strReturn = String::Format("Version: {0}.{1}\r\n", convNS->firstVersion, convNS->secondVersion);
 				break;
+			case 't': strReturn = String::Format("Trackmode: {0}\r\n", convNS->trackMode);
+				break;
 			case 'h': strReturn = String::Format("HC DateTime: {0,4:0000}-{1,2:00}-{2,2:00} {3,2:00}:{4,2:00}:{5,2:00} GMT+{6} SummerTime:{7}\r\n",
 				convNS->hcYear, convNS->hcMonth, convNS->hcDay, convNS->hcHour, convNS->hcMinutes, convNS->hcSeconds, convNS->hcOffsetGMT, convNS->hcSummerTime);
+				break;
+			case 'e': strReturn = String::Format("RA, DEC: {0,10:F3}, {1,10:F3}\r\n", convNS->raCurrent, convNS->decCurrent);
+				break;
+			case 'z': strReturn = String::Format("AZM, ALT: {0,10:F3}, {1,10:F3}\r\n", convNS->azmCurrent, convNS->altCurrent);
+				break;
+			case 'J': if (convNS->alignmentStatus)
+			    {
+				    strReturn = String::Format("Alignment: aligned\r\n");
+			    }
+				else
+			    {
+				    strReturn = String::Format("Alignment: not aligned\r\n");
+			    }
+				break;
+			case 'w': String ^ strHem = gcnew String(convNS->hemisCurrent);
+				String^ strEw = gcnew String(convNS->eastWestCurrent);
+				strReturn = String::Format("Location Long: {0,12:F5} {1}      Lat: {2,12:F5} {3}\r\n", 
+				convNS->longitudeCurrent, strHem, convNS->latitudeCurrent, strEw);
 				break;
 			}
 
@@ -99,3 +120,34 @@ String^ HandController::sendAndReceive(String^ command)
 		}
 		return strReturn;
 	}
+
+void  HandController::setTime(int diffUtm, bool summerTime)
+{
+	struct tm* zeit;
+	time_t sec;
+
+	time(&sec);
+	zeit = localtime(&sec);
+
+	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
+	sb[0] = 'H';
+	sb[1] = (unsigned char)(zeit->tm_hour & 0xff);
+	sb[2] = (unsigned char)(zeit->tm_min & 0xff);
+	sb[3] = (unsigned char)(zeit->tm_sec & 0xff);
+	sb[4] = (unsigned char)((zeit->tm_mon+1) & 0xff);
+	sb[5] = (unsigned char)(zeit->tm_mday & 0xff);
+	sb[6] = (unsigned char)((zeit->tm_year - 100) & 0xff);
+	sb[7] = (unsigned char)diffUtm;
+	sb[8] = 0;
+	if (summerTime)
+	{
+		sb[8] = 1;
+	}
+	sb[9] = 0;
+
+	transmit(10, sb);
+	unsigned char eb[32];
+	int length = receive(eb);
+	
+}
+

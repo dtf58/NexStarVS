@@ -19,9 +19,13 @@ namespace CppCLRWinFormsProject {
 		listGetBox->Items->Add("t Tracking Mode");
 		listGetBox->Items->Add("w Location");
 		listGetBox->Items->Add("h Time");
+		listGetBox->Items->Add("J Alignment");
 		listGetBox->Items->Add("V Version");
 
 		buttonGet->Enabled = false;
+		SetTime->Enabled = false;
+		setLoc->Enabled = false;
+		UtmDistance->SelectedIndex = 13;
 
 	}
 
@@ -48,6 +52,8 @@ namespace CppCLRWinFormsProject {
 			{
 				OutputBox->AppendText("Connection opened!\r\n");
 				buttonGet->Enabled = true;
+				SetTime->Enabled = true;
+				setLoc->Enabled = true;
 				button1->Text = "Disconnect";
 			}
 			else
@@ -62,6 +68,8 @@ namespace CppCLRWinFormsProject {
 			hc = nullptr;
 			button1->Text = "Connect";
 			buttonGet->Enabled = false;
+			SetTime->Enabled = false;
+			setLoc->Enabled = false;
 			OutputBox->AppendText("Connection closed!\r\n");
 		}
 
@@ -92,5 +100,14 @@ namespace CppCLRWinFormsProject {
 		OutputBox->AppendText(receive);
 
     }
+	Void Form1::SetTime_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		int ind = UtmDistance->SelectedIndex -12;
+		bool check = checkSummer->Checked;
+		hc->setTime(ind, check);
+	}
+	Void Form1::setLoc_Click(System::Object^ sender, System::EventArgs^ e)
+	{
 
+	}
 }
