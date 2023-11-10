@@ -143,11 +143,72 @@ void  HandController::setTime(int diffUtm, bool summerTime)
 	{
 		sb[8] = 1;
 	}
-	sb[9] = 0;
 
-	transmit(10, sb);
+	transmit(9, sb);
 	unsigned char eb[32];
 	int length = receive(eb);
 	
 }
 
+void HandController::splitAngle(double angle, int& grd, int& min, int& sec)
+{
+	grd = (int)angle;
+	double h = angle - (double)grd;
+	h *= 60.;
+	min = (int)h;
+	h = h - (double)min;
+	h = h * 60. + 0.5;
+	sec = (int)h;
+}
+
+void HandController::setLocation(String^ locTotal)
+{
+	cli::array<wchar_t>^ sep = { ' ',';' };
+	cli::array<String^>^ subs = locTotal->Split(sep, StringSplitOptions::RemoveEmptyEntries);
+
+	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
+	sb[0] = 'W';
+	sb[4] = 0;
+	sb[8] = 0;
+
+	double angle = Convert::ToDouble(subs[2]);
+	int grd, min, sec;
+	splitAngle(angle, grd, min, sec);
+	sb[1] = (unsigned char)grd;
+	sb[2] = (unsigned char)min;
+	sb[3] = (unsigned char)sec;
+
+	if (subs[3] == "S")
+	{
+		sb[4] = 1;
+	}
+
+	angle = Convert::ToDouble(subs[0]);
+	splitAngle(angle, grd, min, sec);
+	sb[5] = (unsigned char)grd;
+	sb[6] = (unsigned char)min;
+	sb[7] = (unsigned char)sec;
+
+	if (subs[0] == "W")
+	{
+		sb[8] = 1;
+	}
+	transmit(9, sb);
+	unsigned char eb[32];
+	int length = receive(eb);
+}
+
+void HandController::setTracking(bool onOff)
+{
+	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(8);
+	sb[0] = 'T';
+	sb[1] = 0;
+	if (onOff)
+	{
+		sb[1] = 1;
+	}
+	transmit(2, sb);
+	unsigned char eb[32];
+	int length = receive(eb);
+
+}

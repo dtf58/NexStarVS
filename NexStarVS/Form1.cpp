@@ -25,7 +25,10 @@ namespace CppCLRWinFormsProject {
 		buttonGet->Enabled = false;
 		SetTime->Enabled = false;
 		setLoc->Enabled = false;
+		setTracking->Enabled = false;
+		trackOn = true;
 		UtmDistance->SelectedIndex = 13;
+		listLocation->SelectedIndex = 0;
 
 	}
 
@@ -54,6 +57,9 @@ namespace CppCLRWinFormsProject {
 				buttonGet->Enabled = true;
 				SetTime->Enabled = true;
 				setLoc->Enabled = true;
+				setTracking->Enabled = true;
+				setTracking->Text = "Tracking On";
+				trackOn = true;
 				button1->Text = "Disconnect";
 			}
 			else
@@ -70,6 +76,9 @@ namespace CppCLRWinFormsProject {
 			buttonGet->Enabled = false;
 			SetTime->Enabled = false;
 			setLoc->Enabled = false;
+			setTracking->Enabled = false;
+			trackOn = false;
+
 			OutputBox->AppendText("Connection closed!\r\n");
 		}
 
@@ -103,11 +112,65 @@ namespace CppCLRWinFormsProject {
 	Void Form1::SetTime_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		int ind = UtmDistance->SelectedIndex -12;
+		if (ind < 0)
+		{
+			ind = 256 - ind;
+		}
 		bool check = checkSummer->Checked;
 		hc->setTime(ind, check);
 	}
 	Void Form1::setLoc_Click(System::Object^ sender, System::EventArgs^ e)
 	{
-
+		String^ locTotal = listLocation->Text;
+		hc->setLocation(locTotal);
 	}
+
+	Void Form1::setTracking_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		if (trackOn)
+		{
+			hc->setTracking(trackOn);
+			setTracking->Text = "Tracking Off";
+			trackOn = false;
+
+		}
+		else
+		{
+			hc->setTracking(trackOn);
+			setTracking->Text = "Tracking On";
+			trackOn = true;
+		}
+	}
+
+
+    Void Form1::openXml_Click(System::Object^ sender, System::EventArgs^ e) 
+	{
+
+		OpenFileDialog^ ofd = gcnew OpenFileDialog();
+
+		ofd->Filter = "All Files (*.*)|*.*| xml files (*.xml)|*.xml";
+		ofd->FilterIndex = 2;
+
+		if (ofd->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+		{
+			String^ Filename = ofd->FileName;
+			XmlDocument^ xmlDoc = gcnew XmlDocument();
+			try
+			{
+				xmlDoc->Load(Filename);
+				XmlNodeList^ items = xmlDoc->GetElementsByTagName("Location");
+				long num = items->Count;
+				XmlNode^ item = items->Item(0);
+				double longitude = Convert::ToDouble(item->Attributes->GetNamedItem("longitude")->Value);
+				char side = Convert::ToChar(item->Attributes->GetNamedItem("side")->Value);
+				double latitude = Convert::ToDouble(item->Attributes->GetNamedItem("latitude")->Value);
+				char hemis = Convert::ToChar(item->Attributes->GetNamedItem("hemis")->Value);
+			}
+			catch (...)
+			{
+
+			}
+		}
+    }
+
 }
