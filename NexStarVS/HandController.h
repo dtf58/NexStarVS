@@ -22,6 +22,7 @@ public:
 	String^ sendAndReceive(String^ command);
 	void setTime(int diffUtm, bool summerTime);
 	void setLocation(String^ locTotal);
+	void setLmAlign(String^ lmAlign);
 	void splitAngle(double angle, int& grd, int& min, int& sec);
 	void setTracking(bool onOff);
 

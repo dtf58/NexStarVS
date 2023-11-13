@@ -58,6 +58,10 @@ namespace CppCLRWinFormsProject {
 	private: System::Windows::Forms::ComboBox^ listLocation;
 	private: System::Windows::Forms::Button^ setTracking;
 	private: System::Windows::Forms::Button^ openXml;
+	private: System::Windows::Forms::ComboBox^ listLandmarkAligns;
+	private: System::Windows::Forms::Label^ label5;
+	private: System::Windows::Forms::Button^ setLmAlign;
+
 
 
 
@@ -98,6 +102,9 @@ namespace CppCLRWinFormsProject {
 			this->listLocation = (gcnew System::Windows::Forms::ComboBox());
 			this->setTracking = (gcnew System::Windows::Forms::Button());
 			this->openXml = (gcnew System::Windows::Forms::Button());
+			this->listLandmarkAligns = (gcnew System::Windows::Forms::ComboBox());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->setLmAlign = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// button1
@@ -112,7 +119,7 @@ namespace CppCLRWinFormsProject {
 			// 
 			// OutputBox
 			// 
-			this->OutputBox->Location = System::Drawing::Point(65, 457);
+			this->OutputBox->Location = System::Drawing::Point(65, 634);
 			this->OutputBox->Multiline = true;
 			this->OutputBox->Name = L"OutputBox";
 			this->OutputBox->Size = System::Drawing::Size(468, 212);
@@ -142,7 +149,7 @@ namespace CppCLRWinFormsProject {
 			// Output
 			// 
 			this->Output->AutoSize = true;
-			this->Output->Location = System::Drawing::Point(65, 438);
+			this->Output->Location = System::Drawing::Point(65, 615);
 			this->Output->Name = L"Output";
 			this->Output->Size = System::Drawing::Size(45, 16);
 			this->Output->TabIndex = 4;
@@ -240,7 +247,6 @@ namespace CppCLRWinFormsProject {
 			// listLocation
 			// 
 			this->listLocation->FormattingEnabled = true;
-			this->listLocation->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"11.62783 E  50.88868 N" });
 			this->listLocation->Location = System::Drawing::Point(71, 302);
 			this->listLocation->Name = L"listLocation";
 			this->listLocation->Size = System::Drawing::Size(319, 24);
@@ -266,11 +272,41 @@ namespace CppCLRWinFormsProject {
 			this->openXml->UseVisualStyleBackColor = true;
 			this->openXml->Click += gcnew System::EventHandler(this, &Form1::openXml_Click);
 			// 
+			// listLandmarkAligns
+			// 
+			this->listLandmarkAligns->FormattingEnabled = true;
+			this->listLandmarkAligns->Location = System::Drawing::Point(71, 404);
+			this->listLandmarkAligns->Name = L"listLandmarkAligns";
+			this->listLandmarkAligns->Size = System::Drawing::Size(319, 24);
+			this->listLandmarkAligns->TabIndex = 24;
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Location = System::Drawing::Point(71, 382);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(174, 16);
+			this->label5->TabIndex = 25;
+			this->label5->Text = L"Landmark Aligns (AZM ALT)";
+			// 
+			// setLmAlign
+			// 
+			this->setLmAlign->Location = System::Drawing::Point(464, 405);
+			this->setLmAlign->Name = L"setLmAlign";
+			this->setLmAlign->Size = System::Drawing::Size(151, 23);
+			this->setLmAlign->TabIndex = 26;
+			this->setLmAlign->Text = L"Set Align";
+			this->setLmAlign->UseVisualStyleBackColor = true;
+			this->setLmAlign->Click += gcnew System::EventHandler(this, &Form1::setLmAlign_Click);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1003, 777);
+			this->ClientSize = System::Drawing::Size(1003, 969);
+			this->Controls->Add(this->setLmAlign);
+			this->Controls->Add(this->label5);
+			this->Controls->Add(this->listLandmarkAligns);
 			this->Controls->Add(this->openXml);
 			this->Controls->Add(this->setTracking);
 			this->Controls->Add(this->listLocation);
@@ -303,5 +339,6 @@ namespace CppCLRWinFormsProject {
 	private: System::Void setLoc_Click(System::Object^ sender, System::EventArgs^ e);
     private: System::Void setTracking_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void openXml_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void setLmAlign_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }

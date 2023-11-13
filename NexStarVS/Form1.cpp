@@ -10,9 +10,11 @@ namespace CppCLRWinFormsProject {
 		//
 		//TODO: Add the constructor code here
 		//
+		long numPorts = 0;
 		for each (String ^ s in SerialPort::GetPortNames())
 		{
 			listComPorts->Items->Add(s);
+			++numPorts;
 		}
 		listGetBox->Items->Add("e RA/DEC");
 		listGetBox->Items->Add("z AZM-ALT");
@@ -26,9 +28,17 @@ namespace CppCLRWinFormsProject {
 		SetTime->Enabled = false;
 		setLoc->Enabled = false;
 		setTracking->Enabled = false;
+		setLmAlign->Enabled = false;
 		trackOn = true;
 		UtmDistance->SelectedIndex = 13;
-		listLocation->SelectedIndex = 0;
+		if (numPorts > 0)
+		{
+			listComPorts->SelectedIndex = 0;
+		}
+		else
+		{
+			button1->Enabled = false;
+		}
 
 	}
 
@@ -48,23 +58,31 @@ namespace CppCLRWinFormsProject {
 	{
 		if (nullptr == hc)
 		{
-			String^ port = listComPorts->SelectedItem->ToString();
-			hc = gcnew HandController(port);
-			hc->open();
-			if (hc->flagSerial)
+			try
 			{
-				OutputBox->AppendText("Connection opened!\r\n");
-				buttonGet->Enabled = true;
-				SetTime->Enabled = true;
-				setLoc->Enabled = true;
-				setTracking->Enabled = true;
-				setTracking->Text = "Tracking On";
-				trackOn = true;
-				button1->Text = "Disconnect";
+				String^ port = listComPorts->SelectedItem->ToString();
+				hc = gcnew HandController(port);
+				hc->open();
+				if (hc->flagSerial)
+				{
+					OutputBox->AppendText("Connection opened!\r\n");
+					buttonGet->Enabled = true;
+					SetTime->Enabled = true;
+					setLoc->Enabled = true;
+					setTracking->Enabled = true;
+					setLmAlign->Enabled = true;
+					setTracking->Text = "Tracking On";
+					trackOn = true;
+					button1->Text = "Disconnect";
+				}
+				else
+				{
+					OutputBox->AppendText("Connection error\r\n");
+				}
 			}
-			else
+			catch (...)
 			{
-				OutputBox->AppendText("Connection error\r\n");
+				OutputBox->AppendText("Select a port: Connection error\r\n");
 			}
 		}
 		else
@@ -77,6 +95,7 @@ namespace CppCLRWinFormsProject {
 			SetTime->Enabled = false;
 			setLoc->Enabled = false;
 			setTracking->Enabled = false;
+			setLmAlign->Enabled = false;
 			trackOn = false;
 
 			OutputBox->AppendText("Connection closed!\r\n");
@@ -160,17 +179,50 @@ namespace CppCLRWinFormsProject {
 				xmlDoc->Load(Filename);
 				XmlNodeList^ items = xmlDoc->GetElementsByTagName("Location");
 				long num = items->Count;
-				XmlNode^ item = items->Item(0);
-				double longitude = Convert::ToDouble(item->Attributes->GetNamedItem("longitude")->Value);
-				char side = Convert::ToChar(item->Attributes->GetNamedItem("side")->Value);
-				double latitude = Convert::ToDouble(item->Attributes->GetNamedItem("latitude")->Value);
-				char hemis = Convert::ToChar(item->Attributes->GetNamedItem("hemis")->Value);
+				for (long i = 0; i < num; ++i)
+				{
+					XmlNode^ item = items->Item(i);
+					double longitude = Convert::ToDouble(item->Attributes->GetNamedItem("longitude")->Value);
+					double latitude = Convert::ToDouble(item->Attributes->GetNamedItem("latitude")->Value);
+					String^ strLocation = String::Format("{0,8:F4} {1} {2,8:F4} {3} {4}\r\n", longitude, item->Attributes->GetNamedItem("side")->Value,
+						latitude, item->Attributes->GetNamedItem("hemis")->Value, item->Attributes->GetNamedItem("name")->Value);
+					listLocation->Items->Add(strLocation);
+				}
+				if (num > 0)
+				{
+					listLocation->SelectedIndex = 0;
+				}
+				items = xmlDoc->GetElementsByTagName("Landmark");
+				num = items->Count;
+				for (long i = 0; i < num; ++i)
+				{
+					XmlNode^ item = items->Item(i);
+					double azimuth = Convert::ToDouble(item->Attributes->GetNamedItem("azimuth")->Value);
+					double altitude = Convert::ToDouble(item->Attributes->GetNamedItem("altitude")->Value);
+					String^ strLandmark = String::Format("{0,9:F5} {1,9:F5} {2}\r\n", azimuth, altitude, item->Attributes->GetNamedItem("name")->Value);
+					listLandmarkAligns->Items->Add(strLandmark);
+				}
+				if (num > 0)
+				{
+					listLandmarkAligns->SelectedIndex = 0;
+				}
 			}
 			catch (...)
 			{
 
 			}
 		}
+		else
+		{
+			OutputBox->AppendText("Error Open XML\r\n");
+		}
     }
+
+	Void Form1::setLmAlign_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		String^ lmAlign = listLandmarkAligns->Text;
+		hc->setLmAlign(lmAlign);
+	}
+
 
 }

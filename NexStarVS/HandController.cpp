@@ -212,3 +212,8 @@ void HandController::setTracking(bool onOff)
 	int length = receive(eb);
 
 }
+
+void HandController::setLmAlign(String^ lmAlign)
+{
+
+}
