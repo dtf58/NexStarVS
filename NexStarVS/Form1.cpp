@@ -39,7 +39,8 @@ namespace CppCLRWinFormsProject {
 		{
 			button1->Enabled = false;
 		}
-
+		locOk = false;
+		timeOk = false;
 	}
 
 	Form1::~Form1()
@@ -70,7 +71,6 @@ namespace CppCLRWinFormsProject {
 					SetTime->Enabled = true;
 					setLoc->Enabled = true;
 					setTracking->Enabled = true;
-					setLmAlign->Enabled = true;
 					setTracking->Text = "Tracking On";
 					trackOn = true;
 					button1->Text = "Disconnect";
@@ -97,6 +97,8 @@ namespace CppCLRWinFormsProject {
 			setTracking->Enabled = false;
 			setLmAlign->Enabled = false;
 			trackOn = false;
+			locOk = false;
+			timeOk = false;
 
 			OutputBox->AppendText("Connection closed!\r\n");
 		}
@@ -131,17 +133,23 @@ namespace CppCLRWinFormsProject {
 	Void Form1::SetTime_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		int ind = UtmDistance->SelectedIndex -12;
-		if (ind < 0)
-		{
-			ind = 256 - ind;
-		}
 		bool check = checkSummer->Checked;
 		hc->setTime(ind, check);
+		timeOk = true;
+		if (locOk && timeOk)
+		{
+			setLmAlign->Enabled = true;
+		}
 	}
 	Void Form1::setLoc_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		String^ locTotal = listLocation->Text;
 		hc->setLocation(locTotal);
+		locOk = true;
+		if (locOk && timeOk)
+		{
+			setLmAlign->Enabled = true;
+		}
 	}
 
 	Void Form1::setTracking_Click(System::Object^ sender, System::EventArgs^ e)
@@ -221,7 +229,9 @@ namespace CppCLRWinFormsProject {
 	Void Form1::setLmAlign_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		String^ lmAlign = listLandmarkAligns->Text;
-		hc->setLmAlign(lmAlign);
+		String^ receive = hc->setLmAlign(lmAlign);
+		OutputBox->AppendText(receive);
+
 	}
 
 

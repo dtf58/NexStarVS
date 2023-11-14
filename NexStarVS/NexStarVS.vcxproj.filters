@@ -35,6 +35,9 @@
     <ClInclude Include="ConvertNexStar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AstroCalc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CppCLR_WinFormsProject.cpp">
@@ -53,6 +56,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ConvertNexStar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AstroCalc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

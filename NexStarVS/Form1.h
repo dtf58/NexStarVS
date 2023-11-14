@@ -32,6 +32,8 @@ namespace CppCLRWinFormsProject {
 	private: System::Windows::Forms::Button^ button1;
 	private: System::Windows::Forms::TextBox^ OutputBox;
 	private: bool trackOn;
+	private: bool locOk;
+	private: bool timeOk;
 	private: HandController^ hc;
 	private: System::Windows::Forms::ListBox^ listComPorts;
 	private: System::Windows::Forms::Label^ label1;

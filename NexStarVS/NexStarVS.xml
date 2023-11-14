@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Entries>
    <Location longitude="11.62783" side="E" latitude="50.88868" hemis="N" name="Balkon-HDW8"/>
-   <Location longitude="11.62786" side="E" latitude="50.88872" hemis="N" name="Entry-HDW8"/>
-   <Landmark azimuth="120.2456" altitude="3.5143" name="KT-Drackendorf-Balkon"/>
-   <Landmark azimuth="270.2456" altitude="2.5143" name="Radio-Tower-Entry"/>
+   <Location longitude="11.62763" side="E" latitude="50.88877" hemis="N" name="Entry-HDW8"/>
+   <Landmark azimuth="121.2658" altitude="7.7087" name="KT-Drackendorf-Balkon"/>
+   <Landmark azimuth="109.5795" altitude="5.6176" name="Sat-Wuest-Balkon"/>
 </Entries>   

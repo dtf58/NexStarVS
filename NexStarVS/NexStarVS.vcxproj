@@ -130,6 +130,7 @@
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AstroCalc.h" />
     <ClInclude Include="ConvertNexStar.h" />
     <ClInclude Include="Form1.h">
       <FileType>CppForm</FileType>
@@ -140,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="AstroCalc.cpp" />
     <ClCompile Include="ConvertNexStar.cpp" />
     <ClCompile Include="CppCLR_WinFormsProject.cpp" />
     <ClCompile Include="Form1.cpp" />

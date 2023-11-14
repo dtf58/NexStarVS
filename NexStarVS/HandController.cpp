@@ -8,6 +8,9 @@ HandController::HandController(System::String ^port):
 {
 	myPort = gcnew SerialPort(port, 9600, Parity::None, 8, StopBits::One );
 	convNS = new ConvertNexStar();
+	astroC = new AstroCalc();
+	summerTime = false,
+	diffUtm = 0;
 }
 
 HandController::~HandController()
@@ -17,6 +20,8 @@ HandController::~HandController()
 		flagSerial = false;
 		myPort->Close();
 	}
+	delete convNS;
+	delete astroC;
 }
 
 void HandController::open()
@@ -93,9 +98,9 @@ String^ HandController::sendAndReceive(String^ command)
 			case 'h': strReturn = String::Format("HC DateTime: {0,4:0000}-{1,2:00}-{2,2:00} {3,2:00}:{4,2:00}:{5,2:00} GMT+{6} SummerTime:{7}\r\n",
 				convNS->hcYear, convNS->hcMonth, convNS->hcDay, convNS->hcHour, convNS->hcMinutes, convNS->hcSeconds, convNS->hcOffsetGMT, convNS->hcSummerTime);
 				break;
-			case 'e': strReturn = String::Format("RA, DEC: {0,10:F3}, {1,10:F3}\r\n", convNS->raCurrent, convNS->decCurrent);
+			case 'e': strReturn = String::Format("RA, DEC: {0,10:F4}, {1,10:F4}\r\n", convNS->raCurrent, convNS->decCurrent);
 				break;
-			case 'z': strReturn = String::Format("AZM, ALT: {0,10:F3}, {1,10:F3}\r\n", convNS->azmCurrent, convNS->altCurrent);
+			case 'z': strReturn = String::Format("AZM, ALT: {0,10:F4}, {1,10:F4}\r\n", convNS->azmCurrent, convNS->altCurrent);
 				break;
 			case 'J': if (convNS->alignmentStatus)
 			    {
@@ -121,7 +126,7 @@ String^ HandController::sendAndReceive(String^ command)
 		return strReturn;
 	}
 
-void  HandController::setTime(int diffUtm, bool summerTime)
+void  HandController::setTime(int ind, bool check)
 {
 	struct tm* zeit;
 	time_t sec;
@@ -137,7 +142,15 @@ void  HandController::setTime(int diffUtm, bool summerTime)
 	sb[4] = (unsigned char)((zeit->tm_mon+1) & 0xff);
 	sb[5] = (unsigned char)(zeit->tm_mday & 0xff);
 	sb[6] = (unsigned char)((zeit->tm_year - 100) & 0xff);
-	sb[7] = (unsigned char)diffUtm;
+
+	diffUtm = ind;
+	int help = ind;
+	if (ind < 0)
+	{
+		help = 256 + ind;
+	}
+	summerTime = check;
+	sb[7] = (unsigned char)help;
 	sb[8] = 0;
 	if (summerTime)
 	{
@@ -171,9 +184,9 @@ void HandController::setLocation(String^ locTotal)
 	sb[4] = 0;
 	sb[8] = 0;
 
-	double angle = Convert::ToDouble(subs[2]);
+	locLat = Convert::ToDouble(subs[2]);
 	int grd, min, sec;
-	splitAngle(angle, grd, min, sec);
+	splitAngle(locLat, grd, min, sec);
 	sb[1] = (unsigned char)grd;
 	sb[2] = (unsigned char)min;
 	sb[3] = (unsigned char)sec;
@@ -181,10 +194,11 @@ void HandController::setLocation(String^ locTotal)
 	if (subs[3] == "S")
 	{
 		sb[4] = 1;
+		locLat = -locLat;
 	}
 
-	angle = Convert::ToDouble(subs[0]);
-	splitAngle(angle, grd, min, sec);
+	locLong = Convert::ToDouble(subs[0]);
+	splitAngle(locLong, grd, min, sec);
 	sb[5] = (unsigned char)grd;
 	sb[6] = (unsigned char)min;
 	sb[7] = (unsigned char)sec;
@@ -192,6 +206,7 @@ void HandController::setLocation(String^ locTotal)
 	if (subs[0] == "W")
 	{
 		sb[8] = 1;
+		locLong = -locLong;
 	}
 	transmit(9, sb);
 	unsigned char eb[32];
@@ -213,7 +228,64 @@ void HandController::setTracking(bool onOff)
 
 }
 
-void HandController::setLmAlign(String^ lmAlign)
+String^ HandController::setLmAlign(String^ lmAlign)
 {
+	cli::array<wchar_t>^ sep = { ' ',';' };
+	cli::array<String^>^ subs = lmAlign->Split(sep, StringSplitOptions::RemoveEmptyEntries);
 
+	double azimuth = Convert::ToDouble(subs[0]);
+	double altitude = Convert::ToDouble(subs[1]);
+
+	double ra;
+	double de;
+
+	astroC->azAlt2RaDec(azimuth, altitude, locLong, locLat, diffUtm, summerTime, ra, de);
+
+	String^ strReturn = gcnew String("");
+
+	double rah = ra / 180. * 12.;
+	int rad = (int)rah;
+	rah -= (double)rad;
+	rah *= 60.;
+	int ram = (int)rah;
+	rah -= (double)ram;
+	int ras = rah * 60. + 0.5;
+
+	int min = 1;
+	double deh = de;
+	if (de < 0.)
+	{
+		min = -1;
+		deh = -de;
+	}
+	int ded = (int)deh;
+	deh -= (double)ded;
+	deh *= 60.;
+	int dem = (int)deh;
+	deh -= (int)dem;
+	int des = deh * 60. + 0.5;
+
+	strReturn = String::Format("RA: {0}h{1}m{2}s   DE: {3}d{4}m{5}s\r\n",
+		rad,ram,ras,ded*min,dem,des);
+
+/*
+	if (de < 0.)
+	{
+		de += 360;
+	}
+
+	long raL = (ra / 360. * 4294967296. + 0.5);
+	long deL = (de / 360. * 4294967296. + 0.5);
+
+	String^ strSync =  String::Format("s{0},{1}", raL, deL);
+
+	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
+	sb[0] = 's';
+	int grd, min, sec;
+	splitAngle(ra, grd, min, sec);
+	sb[1] = (unsigned char)grd;
+	sb[2] = (unsigned char)min;
+	sb[3] = (unsigned char)sec;
+*/
+	return strReturn;
 }

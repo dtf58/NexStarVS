@@ -1,6 +1,7 @@
 #include <iostream>
 #include <array>
 #include "ConvertNexStar.h"
+#include "AstroCalc.h"
 using namespace std;
 #using <System.dll>
 
@@ -20,9 +21,9 @@ public:
 	void transmit(int length, cli::array<unsigned char> ^buffer);
 	int receive(unsigned char * buffer);
 	String^ sendAndReceive(String^ command);
-	void setTime(int diffUtm, bool summerTime);
+	void setTime(int ind, bool check);
 	void setLocation(String^ locTotal);
-	void setLmAlign(String^ lmAlign);
+	String^ setLmAlign(String^ lmAlign);
 	void splitAngle(double angle, int& grd, int& min, int& sec);
 	void setTracking(bool onOff);
 
@@ -30,5 +31,11 @@ public:
 	bool flagSerial;
 	SerialPort^ myPort;
 
+	bool summerTime;
+	int diffUtm;
+	double locLong;
+	double locLat;
+
 	ConvertNexStar* convNS;
+	AstroCalc* astroC;
 };
