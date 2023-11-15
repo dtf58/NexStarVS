@@ -34,9 +34,6 @@ void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double 
     timeNow.hour_ = zeit->tm_hour;
     timeNow.minute_ = zeit->tm_min;
     timeNow.second_ = zeit->tm_sec;
-    timeNow.hour_ = 17;
-    timeNow.minute_ = 0;
-    timeNow.second_ = 0;
 
     CalcMjd(timeNow);
 
@@ -50,7 +47,7 @@ void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double 
     double sidloc = (tauGreenwich + lon * DEG2RAD);
 
     double tau;
-    hor2EciLd(azimuth * DEG2RAD, altitude * DEG2RAD, lat * DEG2RAD, dec, tau);
+    azAlt2DeTau(azimuth * DEG2RAD, altitude * DEG2RAD, lat * DEG2RAD, dec, tau);
 
     ra = sidloc-(tau-PI);
     if (ra > 2 * PI)
@@ -66,7 +63,7 @@ void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double 
     dec *= RAD2DEG;
 }
 
-void AstroCalc::hor2EciLd(double azimuth, double altitude, double latitude, double& de, double& tau)
+void AstroCalc::azAlt2DeTau(double azimuth, double altitude, double latitude, double& de, double& tau)
 {
     double hor[3], equ[3];
     double mat[3][3], r;

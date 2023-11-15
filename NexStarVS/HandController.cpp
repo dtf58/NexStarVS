@@ -268,24 +268,30 @@ String^ HandController::setLmAlign(String^ lmAlign)
 	strReturn = String::Format("RA: {0}h{1}m{2}s   DE: {3}d{4}m{5}s\r\n",
 		rad,ram,ras,ded*min,dem,des);
 
-/*
 	if (de < 0.)
 	{
 		de += 360;
 	}
 
-	long raL = (ra / 360. * 4294967296. + 0.5);
-	long deL = (de / 360. * 4294967296. + 0.5);
+	unsigned long raL = (ra / 360. * 4294967296. + 0.5);
+	unsigned long deL = (de / 360. * 4294967296. + 0.5);
 
-	String^ strSync =  String::Format("s{0},{1}", raL, deL);
+	char helpBuf[32];
+	sprintf(helpBuf, "s%08x,%08x", raL, deL);
 
 	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
-	sb[0] = 's';
-	int grd, min, sec;
-	splitAngle(ra, grd, min, sec);
-	sb[1] = (unsigned char)grd;
-	sb[2] = (unsigned char)min;
-	sb[3] = (unsigned char)sec;
-*/
+	int num = 0;
+	for (;;)
+	{
+		if (helpBuf[num] == 0)
+			break;
+		sb[num] = helpBuf[num];
+		++num;
+	}
+
+	transmit(num, sb);
+	unsigned char eb[32];
+	int length = receive(eb);
+
 	return strReturn;
 }
