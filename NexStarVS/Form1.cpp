@@ -29,6 +29,7 @@ namespace CppCLRWinFormsProject {
 		setLoc->Enabled = false;
 		setTracking->Enabled = false;
 		setLmAlign->Enabled = false;
+		SaveDeTau->Enabled = false;
 		trackOn = true;
 		UtmDistance->SelectedIndex = 13;
 		if (numPorts > 0)
@@ -71,6 +72,7 @@ namespace CppCLRWinFormsProject {
 					SetTime->Enabled = true;
 					setLoc->Enabled = true;
 					setTracking->Enabled = true;
+					SaveDeTau->Enabled = true;
 					setTracking->Text = "Tracking On";
 					trackOn = true;
 					button1->Text = "Disconnect";
@@ -96,6 +98,7 @@ namespace CppCLRWinFormsProject {
 			setLoc->Enabled = false;
 			setTracking->Enabled = false;
 			setLmAlign->Enabled = false;
+			SaveDeTau->Enabled = false;
 			trackOn = false;
 			locOk = false;
 			timeOk = false;
@@ -234,5 +237,16 @@ namespace CppCLRWinFormsProject {
 
 	}
 
+	Void Form1::SaveDeTau_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		SaveFileDialog^ sfd = gcnew SaveFileDialog();
+		sfd->Filter = "TxT Files (*.txt) | *.txt";
+		sfd->FilterIndex = 1;
+		if (sfd->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+		{
+			String^ Filename = sfd->FileName;
+			hc->saveDeTau(Filename);
+		}
+	}
 
 }

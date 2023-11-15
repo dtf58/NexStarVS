@@ -5,9 +5,6 @@
 #include <math.h>
 #include <numbers>
 
-const double PI = 3.141592653589793238463;
-const double DEG2RAD = PI / 180.;
-const double RAD2DEG = 180. / PI;
 
 AstroCalc::AstroCalc()
 {
@@ -75,6 +72,24 @@ void AstroCalc::azAlt2DeTau(double azimuth, double altitude, double latitude, do
     calcPolarAngles(equ, tau, de, r);
 
 }
+
+void AstroCalc::azAlt2DeTau(double azimuth, double altitude, double latitude, double& de, double& tau, double& tau1, double& tau2)
+{
+    double sinDec = cos(altitude) * cos(azimuth) * cos(latitude) + sin(altitude) * sin(latitude);
+    de = asin(sinDec);
+    double cosDec = cos(de);
+
+    double sinTau = cos(altitude) * sin(azimuth) / cosDec;
+    tau = asin(sinTau);
+
+    double cosTau = ((cos(altitude) * cos(azimuth) * sin(latitude)) + (sin(altitude) * cos(latitude))) / cosDec;
+    tau1 = acos(cosTau);
+
+    cosTau = (sin(altitude) - (sin(de) * sin(latitude))) / cosDec / cos(latitude);
+    tau2 = acos(cosTau);
+
+}
+
 
 void AstroCalc::calcCart(double phi, double theta, double r, double Vec[3])
 {

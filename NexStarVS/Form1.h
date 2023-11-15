@@ -63,6 +63,8 @@ namespace CppCLRWinFormsProject {
 	private: System::Windows::Forms::ComboBox^ listLandmarkAligns;
 	private: System::Windows::Forms::Label^ label5;
 	private: System::Windows::Forms::Button^ setLmAlign;
+	private: System::Windows::Forms::Button^ SaveDeTau;
+
 
 
 
@@ -107,6 +109,7 @@ namespace CppCLRWinFormsProject {
 			this->listLandmarkAligns = (gcnew System::Windows::Forms::ComboBox());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->setLmAlign = (gcnew System::Windows::Forms::Button());
+			this->SaveDeTau = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// button1
@@ -301,11 +304,22 @@ namespace CppCLRWinFormsProject {
 			this->setLmAlign->UseVisualStyleBackColor = true;
 			this->setLmAlign->Click += gcnew System::EventHandler(this, &Form1::setLmAlign_Click);
 			// 
+			// SaveDeTau
+			// 
+			this->SaveDeTau->Location = System::Drawing::Point(746, 538);
+			this->SaveDeTau->Name = L"SaveDeTau";
+			this->SaveDeTau->Size = System::Drawing::Size(132, 23);
+			this->SaveDeTau->TabIndex = 27;
+			this->SaveDeTau->Text = L"SaveDeTau";
+			this->SaveDeTau->UseVisualStyleBackColor = true;
+			this->SaveDeTau->Click += gcnew System::EventHandler(this, &Form1::SaveDeTau_Click);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1003, 969);
+			this->Controls->Add(this->SaveDeTau);
 			this->Controls->Add(this->setLmAlign);
 			this->Controls->Add(this->label5);
 			this->Controls->Add(this->listLandmarkAligns);
@@ -342,5 +356,6 @@ namespace CppCLRWinFormsProject {
     private: System::Void setTracking_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void openXml_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void setLmAlign_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void SaveDeTau_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }

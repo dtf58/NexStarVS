@@ -249,7 +249,7 @@ String^ HandController::setLmAlign(String^ lmAlign)
 	rah *= 60.;
 	int ram = (int)rah;
 	rah -= (double)ram;
-	int ras = rah * 60. + 0.5;
+	int ras = (int)( rah * 60. + 0.5);
 
 	int min = 1;
 	double deh = de;
@@ -263,7 +263,7 @@ String^ HandController::setLmAlign(String^ lmAlign)
 	deh *= 60.;
 	int dem = (int)deh;
 	deh -= (int)dem;
-	int des = deh * 60. + 0.5;
+	int des = (int)(deh * 60. + 0.5);
 
 	strReturn = String::Format("RA: {0}h{1}m{2}s   DE: {3}d{4}m{5}s\r\n",
 		rad,ram,ras,ded*min,dem,des);
@@ -273,8 +273,8 @@ String^ HandController::setLmAlign(String^ lmAlign)
 		de += 360;
 	}
 
-	unsigned long raL = (ra / 360. * 4294967296. + 0.5);
-	unsigned long deL = (de / 360. * 4294967296. + 0.5);
+	unsigned long raL =(unsigned long) (ra / 360. * 4294967296. + 0.5);
+	unsigned long deL =(unsigned long) (de / 360. * 4294967296. + 0.5);
 
 	char helpBuf[32];
 	sprintf(helpBuf, "s%08x,%08x", raL, deL);
@@ -294,4 +294,43 @@ String^ HandController::setLmAlign(String^ lmAlign)
 	int length = receive(eb);
 
 	return strReturn;
+}
+
+void HandController::saveDeTau(String^ name)
+{
+	double latitude = 50.8887;
+
+	double azimuth = 0.;
+	double altitude = 1.;
+	double de, de2, tau, tau0, tau1, tau2;
+
+	StreamWriter^ sw = gcnew StreamWriter(name);
+
+	for (int i = 0; i < 36; ++i)
+	{
+		altitude = 1.;
+		for (int j = 0; j < 9; ++j)
+		{
+			astroC->azAlt2DeTau(azimuth * DEG2RAD, altitude * DEG2RAD, latitude * DEG2RAD, de, tau);
+			astroC->azAlt2DeTau(azimuth * DEG2RAD, altitude * DEG2RAD, latitude * DEG2RAD, de2, tau0, tau1, tau2);
+
+			char buffer[256];
+
+			sprintf(buffer, "%8.1f; %8.1f; %12.5f; %12.5f; %12.5f; %12.5f; %12.5f; %12.5f\n",
+				azimuth, altitude, de * RAD2DEG, tau / PI * 12., de2 * RAD2DEG, tau0 / PI * 12., tau1 / PI * 12., tau2 / PI * 12.);
+
+			String^ outStr = gcnew String(buffer);
+
+			sw->Write(outStr);
+			altitude += 10.;
+
+		}
+		azimuth += 10.;
+	}
+
+
+	sw->Write(name);
+
+	sw->Close();
+
 }

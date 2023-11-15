@@ -6,9 +6,9 @@ using namespace std;
 #using <System.dll>
 
 using namespace System;
+using namespace System::IO;
 using namespace System::IO::Ports;
 using namespace System::Threading;
-
 
 #pragma once
 ref class HandController
@@ -26,6 +26,7 @@ public:
 	String^ setLmAlign(String^ lmAlign);
 	void splitAngle(double angle, int& grd, int& min, int& sec);
 	void setTracking(bool onOff);
+	void saveDeTau(String^ name);
 
 
 	bool flagSerial;

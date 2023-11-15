@@ -1,5 +1,9 @@
 #pragma once
 
+const double PI = 3.141592653589793238463;
+const double DEG2RAD = PI / 180.;
+const double RAD2DEG = 180. / PI;
+
 typedef struct TimeOwn_ {
 	int year_;
 	int month_;
@@ -17,9 +21,10 @@ public:
 	~AstroCalc();
 
 	void azAlt2RaDec(double azimuth, double altitude, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec);
+	void azAlt2DeTau(double azimuth, double altitude, double latitude, double& de, double& tau);
+	void azAlt2DeTau(double azimuth, double altitude, double latitude, double& de, double& tau, double& tau1, double& tau2);
 
 private:
-	void azAlt2DeTau(double azimuth, double altitude, double latitude, double& de, double& tau);
 	void calcCart(double phi, double theta, double r, double V[3]);
 	void Rot_x(double rot, double mat[3][3]);
 	void Rot_y(double rot, double mat[3][3]);
