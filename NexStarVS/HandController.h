@@ -24,7 +24,9 @@ public:
 	void setTime(int ind, bool check);
 	void setLocation(String^ locTotal);
 	String^ setLmAlign(String^ lmAlign);
+	String^ calcRaDe(String^ timeStamp, String^ direction);
 	void splitAngle(double angle, int& grd, int& min, int& sec);
+	String^ outSplitAngleHour(double angleHour, double factor, bool degFlag);
 	void setTracking(bool onOff);
 	void saveDeTau(String^ name);
 

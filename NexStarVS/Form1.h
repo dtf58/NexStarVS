@@ -35,6 +35,7 @@ namespace CppCLRWinFormsProject {
 	private: bool locOk;
 	private: bool timeOk;
 	private: HandController^ hc;
+	private: StreamWriter^ outLog;
 	private: System::Windows::Forms::ListBox^ listComPorts;
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ Output;
@@ -64,6 +65,13 @@ namespace CppCLRWinFormsProject {
 	private: System::Windows::Forms::Label^ label5;
 	private: System::Windows::Forms::Button^ setLmAlign;
 	private: System::Windows::Forms::Button^ SaveDeTau;
+	private: System::Windows::Forms::TextBox^ testTimeStamp;
+	private: System::Windows::Forms::Label^ label6;
+	private: System::Windows::Forms::ComboBox^ testDirections;
+	private: System::Windows::Forms::Label^ label7;
+	private: System::Windows::Forms::Button^ calcRaDe;
+
+
 
 
 
@@ -110,6 +118,11 @@ namespace CppCLRWinFormsProject {
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->setLmAlign = (gcnew System::Windows::Forms::Button());
 			this->SaveDeTau = (gcnew System::Windows::Forms::Button());
+			this->testTimeStamp = (gcnew System::Windows::Forms::TextBox());
+			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->testDirections = (gcnew System::Windows::Forms::ComboBox());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->calcRaDe = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// button1
@@ -124,7 +137,7 @@ namespace CppCLRWinFormsProject {
 			// 
 			// OutputBox
 			// 
-			this->OutputBox->Location = System::Drawing::Point(65, 634);
+			this->OutputBox->Location = System::Drawing::Point(71, 781);
 			this->OutputBox->Multiline = true;
 			this->OutputBox->Name = L"OutputBox";
 			this->OutputBox->Size = System::Drawing::Size(468, 212);
@@ -154,7 +167,7 @@ namespace CppCLRWinFormsProject {
 			// Output
 			// 
 			this->Output->AutoSize = true;
-			this->Output->Location = System::Drawing::Point(65, 615);
+			this->Output->Location = System::Drawing::Point(71, 762);
 			this->Output->Name = L"Output";
 			this->Output->Size = System::Drawing::Size(45, 16);
 			this->Output->TabIndex = 4;
@@ -306,19 +319,67 @@ namespace CppCLRWinFormsProject {
 			// 
 			// SaveDeTau
 			// 
-			this->SaveDeTau->Location = System::Drawing::Point(746, 538);
+			this->SaveDeTau->Location = System::Drawing::Point(738, 771);
 			this->SaveDeTau->Name = L"SaveDeTau";
 			this->SaveDeTau->Size = System::Drawing::Size(132, 23);
 			this->SaveDeTau->TabIndex = 27;
-			this->SaveDeTau->Text = L"SaveDeTau";
+			this->SaveDeTau->Text = L"Save Output";
 			this->SaveDeTau->UseVisualStyleBackColor = true;
 			this->SaveDeTau->Click += gcnew System::EventHandler(this, &Form1::SaveDeTau_Click);
+			// 
+			// testTimeStamp
+			// 
+			this->testTimeStamp->Location = System::Drawing::Point(68, 527);
+			this->testTimeStamp->Name = L"testTimeStamp";
+			this->testTimeStamp->Size = System::Drawing::Size(198, 22);
+			this->testTimeStamp->TabIndex = 28;
+			// 
+			// label6
+			// 
+			this->label6->AutoSize = true;
+			this->label6->Location = System::Drawing::Point(65, 505);
+			this->label6->Name = L"label6";
+			this->label6->Size = System::Drawing::Size(110, 16);
+			this->label6->TabIndex = 29;
+			this->label6->Text = L"Test Time Stamp";
+			// 
+			// testDirections
+			// 
+			this->testDirections->FormattingEnabled = true;
+			this->testDirections->Location = System::Drawing::Point(65, 593);
+			this->testDirections->Name = L"testDirections";
+			this->testDirections->Size = System::Drawing::Size(316, 24);
+			this->testDirections->TabIndex = 30;
+			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Location = System::Drawing::Point(65, 565);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(97, 16);
+			this->label7->TabIndex = 31;
+			this->label7->Text = L"Test Directions";
+			// 
+			// calcRaDe
+			// 
+			this->calcRaDe->Location = System::Drawing::Point(464, 593);
+			this->calcRaDe->Name = L"calcRaDe";
+			this->calcRaDe->Size = System::Drawing::Size(75, 23);
+			this->calcRaDe->TabIndex = 32;
+			this->calcRaDe->Text = L"Calc RA DE";
+			this->calcRaDe->UseVisualStyleBackColor = true;
+			this->calcRaDe->Click += gcnew System::EventHandler(this, &Form1::calcRaDe_Click);
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1003, 969);
+			this->ClientSize = System::Drawing::Size(1003, 1138);
+			this->Controls->Add(this->calcRaDe);
+			this->Controls->Add(this->label7);
+			this->Controls->Add(this->testDirections);
+			this->Controls->Add(this->label6);
+			this->Controls->Add(this->testTimeStamp);
 			this->Controls->Add(this->SaveDeTau);
 			this->Controls->Add(this->setLmAlign);
 			this->Controls->Add(this->label5);
@@ -357,5 +418,6 @@ namespace CppCLRWinFormsProject {
 	private: System::Void openXml_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void setLmAlign_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void SaveDeTau_Click(System::Object^ sender, System::EventArgs^ e);
+    private: System::Void calcRaDe_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }

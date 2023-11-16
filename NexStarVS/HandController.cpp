@@ -228,6 +228,28 @@ void HandController::setTracking(bool onOff)
 
 }
 
+String^ HandController::outSplitAngleHour(double angleHour, double factor, bool degFlag)
+{
+	double haf = angleHour * factor;
+	int sign = 1;
+	if (haf < 0)
+	{
+		haf = -haf;
+		sign = -1;
+	}
+	int ha, min, sec;
+	splitAngle(haf, ha, min, sec);
+	char c = 'h';
+	if (degFlag)
+	{
+		c = 'd';
+	}
+	char buffer[64];
+	sprintf(buffer, "%4d%c%02dm%02ds", ha * sign, c, min, sec);
+
+	return gcnew String(buffer);
+}
+
 String^ HandController::setLmAlign(String^ lmAlign)
 {
 	cli::array<wchar_t>^ sep = { ' ',';' };
@@ -238,35 +260,15 @@ String^ HandController::setLmAlign(String^ lmAlign)
 
 	double ra;
 	double de;
+	double tau;
+	double sidloc;
 
-	astroC->azAlt2RaDec(azimuth, altitude, locLong, locLat, diffUtm, summerTime, ra, de);
+	astroC->azAlt2RaDec(azimuth, altitude, locLong, locLat, diffUtm, summerTime, ra, de, sidloc, tau);
 
 	String^ strReturn = gcnew String("");
 
-	double rah = ra / 180. * 12.;
-	int rad = (int)rah;
-	rah -= (double)rad;
-	rah *= 60.;
-	int ram = (int)rah;
-	rah -= (double)ram;
-	int ras = (int)( rah * 60. + 0.5);
-
-	int min = 1;
-	double deh = de;
-	if (de < 0.)
-	{
-		min = -1;
-		deh = -de;
-	}
-	int ded = (int)deh;
-	deh -= (double)ded;
-	deh *= 60.;
-	int dem = (int)deh;
-	deh -= (int)dem;
-	int des = (int)(deh * 60. + 0.5);
-
-	strReturn = String::Format("RA: {0}h{1}m{2}s   DE: {3}d{4}m{5}s\r\n",
-		rad,ram,ras,ded*min,dem,des);
+	strReturn = String::Format("RA: {0}   DE: {1}\r\nTau: {2}  LocSidTime: {3}\r\n",
+		outSplitAngleHour(ra, 12. / 180., false), outSplitAngleHour(de, 1., true), outSplitAngleHour(tau, 12. / PI, false), outSplitAngleHour(sidloc, 12. / PI, false));
 
 	if (de < 0.)
 	{
@@ -328,9 +330,47 @@ void HandController::saveDeTau(String^ name)
 		azimuth += 10.;
 	}
 
-
 	sw->Write(name);
 
 	sw->Close();
 
 }
+
+String^ HandController::calcRaDe(String^ timeStamp, String^ direction)
+{
+	double ra;
+	double de;
+	double tau;
+	double sidloc;
+	char timeStampS[32];
+	char directionS[64];
+
+	int length = timeStamp->Length;
+	if (length > 31)
+		length = 31;
+	int i;
+	for (i = 0; i < length; ++i)
+	{
+		timeStampS[i] = (char)timeStamp[i];
+	}
+	timeStampS[i] = 0;
+	length = direction->Length;
+	if (length > 63)
+		length = 63;
+	for (i = 0; i < length; ++i)
+	{
+		directionS[i] = (char)direction[i];
+	}
+	directionS[i] = 0;
+
+
+	astroC->calcRaDec(timeStampS, directionS, locLong, locLat, diffUtm, summerTime, ra, de, sidloc, tau);
+
+	String^ strReturn = gcnew String("");
+
+	strReturn = String::Format("RA: {0}   DE: {1}\r\nTau: {2}  LocSidTime: {3}\r\n",
+		outSplitAngleHour(ra, 12. / 180., false), outSplitAngleHour(de, 1., true), outSplitAngleHour(tau, 12. / PI, false), outSplitAngleHour(sidloc, 12. / PI, false));
+
+	return strReturn;
+}
+

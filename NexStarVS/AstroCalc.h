@@ -20,7 +20,8 @@ public:
 	AstroCalc();
 	~AstroCalc();
 
-	void azAlt2RaDec(double azimuth, double altitude, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec);
+	void azAlt2RaDec(double azimuth, double altitude, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec, double& sidloc, double& tau);
+	void calcRaDec(char* timeStamp, char* direction, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec, double& sidloc, double& tau);
 	void azAlt2DeTau(double azimuth, double altitude, double latitude, double& de, double& tau);
 	void azAlt2DeTau(double azimuth, double altitude, double latitude, double& de, double& tau, double& tau1, double& tau2);
 

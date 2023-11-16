@@ -4,7 +4,8 @@
 namespace CppCLRWinFormsProject {
 
 	Form1::Form1(void):
-		hc(nullptr)
+		hc(nullptr),
+		outLog(nullptr)
 	{
 		InitializeComponent();
 		//
@@ -29,7 +30,6 @@ namespace CppCLRWinFormsProject {
 		setLoc->Enabled = false;
 		setTracking->Enabled = false;
 		setLmAlign->Enabled = false;
-		SaveDeTau->Enabled = false;
 		trackOn = true;
 		UtmDistance->SelectedIndex = 13;
 		if (numPorts > 0)
@@ -54,6 +54,10 @@ namespace CppCLRWinFormsProject {
 		{
 			hc->close();
 		}
+		if (nullptr != outLog)
+		{
+			outLog->Close();
+		}
 	}
 
     Void Form1::button1_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -67,12 +71,16 @@ namespace CppCLRWinFormsProject {
 				hc->open();
 				if (hc->flagSerial)
 				{
-					OutputBox->AppendText("Connection opened!\r\n");
+					String^ str = String::Format("Connection opened to {0}\r\n", port);
+					OutputBox->AppendText(str);
+					if (nullptr != outLog)
+					{
+						outLog->Write(str);
+					}
 					buttonGet->Enabled = true;
 					SetTime->Enabled = true;
 					setLoc->Enabled = true;
 					setTracking->Enabled = true;
-					SaveDeTau->Enabled = true;
 					setTracking->Text = "Tracking On";
 					trackOn = true;
 					button1->Text = "Disconnect";
@@ -80,11 +88,19 @@ namespace CppCLRWinFormsProject {
 				else
 				{
 					OutputBox->AppendText("Connection error\r\n");
+					if (nullptr != outLog)
+					{
+						outLog->Write("Connection error\r\n");
+					}
 				}
 			}
 			catch (...)
 			{
 				OutputBox->AppendText("Select a port: Connection error\r\n");
+				if (nullptr != outLog)
+				{
+					outLog->Write("Select a port: Connection error\r\n");
+				}
 			}
 		}
 		else
@@ -98,12 +114,15 @@ namespace CppCLRWinFormsProject {
 			setLoc->Enabled = false;
 			setTracking->Enabled = false;
 			setLmAlign->Enabled = false;
-			SaveDeTau->Enabled = false;
 			trackOn = false;
 			locOk = false;
 			timeOk = false;
 
 			OutputBox->AppendText("Connection closed!\r\n");
+			if (nullptr != outLog)
+			{
+				outLog->Write("Connection closed!\r\n");
+			}
 		}
 
     }
@@ -121,16 +140,28 @@ namespace CppCLRWinFormsProject {
 		if (nullptr == hc)
 		{
 			OutputBox->AppendText("Connection is not established\r\n");
+			if (nullptr != outLog)
+			{
+				outLog->Write("Connection is not established\r\n");
+			}
 			return;
 		}
 		if (!hc->flagSerial)
 		{
 			OutputBox->AppendText("Connection is not established\r\n");
+			if (nullptr != outLog)
+			{
+				outLog->Write("Connection is not established\r\n");
+			}
 			return;
 		}
 		String^ command = listGetBox->SelectedItem->ToString();
 		String^ receive = hc->sendAndReceive(command);
 		OutputBox->AppendText(receive);
+		if (nullptr != outLog)
+		{
+			outLog->Write(receive);
+		}
 
     }
 	Void Form1::SetTime_Click(System::Object^ sender, System::EventArgs^ e)
@@ -217,6 +248,29 @@ namespace CppCLRWinFormsProject {
 				{
 					listLandmarkAligns->SelectedIndex = 0;
 				}
+				items = xmlDoc->GetElementsByTagName("TestTimeStamp");
+				num = items->Count;
+				if (num > 0)
+				{
+					XmlNode^ item = items->Item(0);
+					testTimeStamp->Text = item->InnerText;
+				}
+				items = xmlDoc->GetElementsByTagName("TestDirection");
+				num = items->Count;
+				for (long i = 0; i < num; ++i)
+				{
+					XmlNode^ item = items->Item(i);
+					String^ strLandmark = String::Format("{0} {1} {2}\r\n", 
+						item->Attributes->GetNamedItem("azimuth")->Value,
+						item->Attributes->GetNamedItem("altitude")->Value,
+						item->Attributes->GetNamedItem("name")->Value);
+					testDirections->Items->Add(strLandmark);
+				}
+				if (num > 0)
+				{
+					testDirections->SelectedIndex = 0;
+				}
+
 			}
 			catch (...)
 			{
@@ -226,6 +280,10 @@ namespace CppCLRWinFormsProject {
 		else
 		{
 			OutputBox->AppendText("Error Open XML\r\n");
+			if (nullptr != outLog)
+			{
+				outLog->Write("Error Open XML\r\n");
+			}
 		}
     }
 
@@ -234,19 +292,44 @@ namespace CppCLRWinFormsProject {
 		String^ lmAlign = listLandmarkAligns->Text;
 		String^ receive = hc->setLmAlign(lmAlign);
 		OutputBox->AppendText(receive);
-
+		if (nullptr != outLog)
+		{
+			outLog->Write(receive);
+		}
 	}
 
 	Void Form1::SaveDeTau_Click(System::Object^ sender, System::EventArgs^ e)
 	{
-		SaveFileDialog^ sfd = gcnew SaveFileDialog();
-		sfd->Filter = "TxT Files (*.txt) | *.txt";
-		sfd->FilterIndex = 1;
-		if (sfd->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+		if (outLog == nullptr)
 		{
-			String^ Filename = sfd->FileName;
-			hc->saveDeTau(Filename);
+			SaveFileDialog^ sfd = gcnew SaveFileDialog();
+			sfd->Filter = "TxT Files (*.txt) | *.txt";
+			sfd->FilterIndex = 1;
+			if (sfd->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+			{
+				String^ Filename = sfd->FileName;
+				outLog = gcnew StreamWriter(Filename);
+				SaveDeTau->Text = "Close Output Save";
+			}
+		}
+		else
+		{
+			outLog->Close();
+			delete outLog;
+			outLog = nullptr;
+			SaveDeTau->Text="Save Output";
 		}
 	}
+	Void Form1::calcRaDe_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		String^ direction = testDirections->Text;
+		String^ timeStamp = testTimeStamp->Text;
+		String^ receive = hc->calcRaDe(timeStamp,direction);
+		OutputBox->AppendText(receive);
+		if (nullptr != outLog)
+		{
+			outLog->Write(receive);
+		}
 
+	}
 }

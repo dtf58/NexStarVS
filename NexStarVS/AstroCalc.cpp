@@ -15,7 +15,7 @@ AstroCalc::~AstroCalc()
 
 }
 
-void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec)
+void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec, double& sidloc, double& tau)
 {
 	struct tm* zeit;
 	time_t sec;
@@ -41,12 +41,53 @@ void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double 
     }
     double tauGreenwich = CalcGast(timeMjdUTC);
 
-    double sidloc = (tauGreenwich + lon * DEG2RAD);
+    sidloc = (tauGreenwich + lon * DEG2RAD);
 
-    double tau;
     azAlt2DeTau(azimuth * DEG2RAD, altitude * DEG2RAD, lat * DEG2RAD, dec, tau);
 
-    ra = sidloc-(tau-PI);
+    ra = sidloc-tau;
+    if (ra > 2 * PI)
+    {
+        ra -= 2 * PI;
+    }
+    if (ra < 0.)
+    {
+        ra += 2 * PI;
+    }
+
+    ra *= RAD2DEG;
+    dec *= RAD2DEG;
+}
+
+void AstroCalc::calcRaDec(char * timeStamp, char * direction, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec, double& sidloc, double& tau)
+{
+    struct tm* zeit;
+    time_t sec;
+
+
+    TimeOwn timeNow;
+
+    timeNow.year_ = zeit->tm_year - 100 + 2000;
+    timeNow.day_ = zeit->tm_mday;
+    timeNow.month_ = zeit->tm_mon + 1;
+    timeNow.hour_ = zeit->tm_hour;
+    timeNow.minute_ = zeit->tm_min;
+    timeNow.second_ = zeit->tm_sec;
+
+    CalcMjd(timeNow);
+
+    double timeMjdUTC = timeNow.timeMjd_ - ((double)diffUtm / 24.);
+    if (summerTime)
+    {
+        timeMjdUTC -= 1. / 24.;
+    }
+    double tauGreenwich = CalcGast(timeMjdUTC);
+
+    sidloc = (tauGreenwich + lon * DEG2RAD);
+
+//    azAlt2DeTau(azimuth * DEG2RAD, altitude * DEG2RAD, lat * DEG2RAD, dec, tau);
+
+    ra = sidloc - tau;
     if (ra > 2 * PI)
     {
         ra -= 2 * PI;
@@ -70,6 +111,15 @@ void AstroCalc::azAlt2DeTau(double azimuth, double altitude, double latitude, do
     matrixVecMult(mat, hor, equ);
 
     calcPolarAngles(equ, tau, de, r);
+
+    if (tau < PI)
+    {
+        tau += PI;
+    }
+    else
+    {
+        tau -= PI;
+    }
 
 }
 
