@@ -17,20 +17,20 @@ AstroCalc::~AstroCalc()
 
 void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec, double& sidloc, double& tau)
 {
-	struct tm* zeit;
-	time_t sec;
+    struct tm zeit;
+    __time64_t sec;
 
-	time(&sec);
-	zeit = localtime(&sec);
+    _time64(&sec);
+    _localtime64_s(&zeit, &sec);
 
     TimeOwn timeNow;
 
-    timeNow.year_ = zeit->tm_year - 100 + 2000;
-    timeNow.day_ = zeit->tm_mday;
-    timeNow.month_ = zeit->tm_mon+1;
-    timeNow.hour_ = zeit->tm_hour;
-    timeNow.minute_ = zeit->tm_min;
-    timeNow.second_ = zeit->tm_sec;
+    timeNow.year_ = zeit.tm_year - 100 + 2000;
+    timeNow.day_ = zeit.tm_mday;
+    timeNow.month_ = zeit.tm_mon+1;
+    timeNow.hour_ = zeit.tm_hour;
+    timeNow.minute_ = zeit.tm_min;
+    timeNow.second_ = zeit.tm_sec;
 
     CalcMjd(timeNow);
 

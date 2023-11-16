@@ -128,20 +128,20 @@ String^ HandController::sendAndReceive(String^ command)
 
 void  HandController::setTime(int ind, bool check)
 {
-	struct tm* zeit;
-	time_t sec;
+	struct tm zeit;
+	__time64_t sec;
 
-	time(&sec);
-	zeit = localtime(&sec);
+	_time64(&sec);
+	_localtime64_s(&zeit,&sec);
 
 	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
 	sb[0] = 'H';
-	sb[1] = (unsigned char)(zeit->tm_hour & 0xff);
-	sb[2] = (unsigned char)(zeit->tm_min & 0xff);
-	sb[3] = (unsigned char)(zeit->tm_sec & 0xff);
-	sb[4] = (unsigned char)((zeit->tm_mon+1) & 0xff);
-	sb[5] = (unsigned char)(zeit->tm_mday & 0xff);
-	sb[6] = (unsigned char)((zeit->tm_year - 100) & 0xff);
+	sb[1] = (unsigned char)(zeit.tm_hour & 0xff);
+	sb[2] = (unsigned char)(zeit.tm_min & 0xff);
+	sb[3] = (unsigned char)(zeit.tm_sec & 0xff);
+	sb[4] = (unsigned char)((zeit.tm_mon+1) & 0xff);
+	sb[5] = (unsigned char)(zeit.tm_mday & 0xff);
+	sb[6] = (unsigned char)((zeit.tm_year - 100) & 0xff);
 
 	diffUtm = ind;
 	int help = ind;
@@ -245,7 +245,7 @@ String^ HandController::outSplitAngleHour(double angleHour, double factor, bool 
 		c = 'd';
 	}
 	char buffer[64];
-	sprintf(buffer, "%4d%c%02dm%02ds", ha * sign, c, min, sec);
+	sprintf_s(buffer, sizeof(buffer), "%4d%c%02dm%02ds", ha * sign, c, min, sec);
 
 	return gcnew String(buffer);
 }
@@ -279,7 +279,7 @@ String^ HandController::setLmAlign(String^ lmAlign)
 	unsigned long deL =(unsigned long) (de / 360. * 4294967296. + 0.5);
 
 	char helpBuf[32];
-	sprintf(helpBuf, "s%08x,%08x", raL, deL);
+	sprintf_s(helpBuf, sizeof(helpBuf), "s%08x,%08x", raL, deL);
 
 	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
 	int num = 0;
@@ -318,7 +318,7 @@ void HandController::saveDeTau(String^ name)
 
 			char buffer[256];
 
-			sprintf(buffer, "%8.1f; %8.1f; %12.5f; %12.5f; %12.5f; %12.5f; %12.5f; %12.5f\n",
+			sprintf_s(buffer, sizeof(buffer),  "%8.1f; %8.1f; %12.5f; %12.5f; %12.5f; %12.5f; %12.5f; %12.5f\n",
 				azimuth, altitude, de * RAD2DEG, tau / PI * 12., de2 * RAD2DEG, tau0 / PI * 12., tau1 / PI * 12., tau2 / PI * 12.);
 
 			String^ outStr = gcnew String(buffer);
