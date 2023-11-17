@@ -5,6 +5,18 @@
    <Landmark azimuth="121.2658" altitude="7.7087" name="KT-Drackendorf-Balkon"/>
    <Landmark azimuth="109.5795" altitude="5.6176" name="Sat-Wuest-Balkon"/>
    <TestTimeStamp>2023-11-16T17:00:00.000</TestTimeStamp>
-   <TestDirection azimuth="121d05m25s" altitude="01d23m36.1s" name="Diphda"/>
+   <TestDirection azimuth="121d04m25s" altitude="01d23m36.1s" name="Diphda"/>
    <TestDirection azimuth="00d59m30s" altitude="50d47m11.1s" name="Polaris"/>
+   <TestDirection azimuth="149d28m23s" altitude="34d47m21.5s" name="Sadalmelik"/>
+   <TestDirection azimuth="238d02m16s" altitude="38d11m04.3s" name="Rasalhague"/>
+   <TestDirection azimuth="334d59m06s" altitude="49d42m57.4s" name="Kochab"/>
+   <TestDirection azimuth="284d27m08s" altitude="12d53m18.2s" name="Arcturus"/>
+   <TestDirection azimuth="275d28m48s" altitude="30d43m59.4s" name="Alphecca"/>
+   <TestDirection azimuth="45d44m49s" altitude="29d31m40.1s" name="Mirfak"/>
+   <TestDirection azimuth="55d37m23s" altitude="53d28m44.2s" name="Schedar"/>
+   <TestDirection azimuth="155d59m13s" altitude="84d01m05.7s" name="Deneb"/>
+   <TestDirection azimuth="248d49m30s" altitude="67d10m08.6s" name="Vega"/>
+   <TestDirection azimuth="340d20m23s" altitude="26d45m42.8s" name="Dubhe"/>
+   <TestDirection azimuth="318d54m10s" altitude="32d29m22.7s" name="Alcor"/>
+   <TestDirection azimuth="198d18m58s" altitude="07d08m47.8s" name="Ascella"/>
 </Entries>   

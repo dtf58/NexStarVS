@@ -3,6 +3,7 @@
 #include <ctime>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 #include <numbers>
 
 
@@ -59,24 +60,56 @@ void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double 
     dec *= RAD2DEG;
 }
 
+void AstroCalc::strOnlyNumbers(char* str)
+{
+    for (int i = 0; i < strlen(str); ++i)
+    {
+        if (!((str[i] >= 48 && str[i] <= 57) || str[i] == '.'))
+        {
+            str[i] = ' ';
+        }
+    }
+
+}
+
+void AstroCalc::timeOwnInit(char* timeStamp, TimeOwn& t)
+{
+    strOnlyNumbers(timeStamp);
+
+    int year, month, day, hour, minute;
+    double second;
+    sscanf_s(timeStamp, "%d %d %d %d %d %le", &year, &month, &day, &hour, &minute, &second);
+
+    t.year_ = year;
+    t.day_ = day;
+    t.month_ = month;
+    t.hour_ = hour;
+    t.minute_ = minute;
+    t.second_ = second;
+    CalcMjd(t);
+}
+
+void AstroCalc::direction2AzAlt(char* direction, double& azimuth, double& altitude)
+{
+    strOnlyNumbers(direction);
+    
+    int azD, azM, altD, altM;
+    double azS, altS;
+
+    sscanf_s(direction, "%d %d %le %d %d %le", &azD, &azM, &azS, &altD, &altM, &altS);
+
+    azimuth = (double)azD + (double)azM / 60. + azS / 3600.;
+    altitude = (double)altD + (double)altM / 60. + altS / 3600.;
+
+}
+
 void AstroCalc::calcRaDec(char * timeStamp, char * direction, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec, double& sidloc, double& tau)
 {
-    struct tm* zeit;
-    time_t sec;
+    TimeOwn timeTest;
 
+    timeOwnInit(timeStamp, timeTest);
 
-    TimeOwn timeNow;
-
-    timeNow.year_ = zeit->tm_year - 100 + 2000;
-    timeNow.day_ = zeit->tm_mday;
-    timeNow.month_ = zeit->tm_mon + 1;
-    timeNow.hour_ = zeit->tm_hour;
-    timeNow.minute_ = zeit->tm_min;
-    timeNow.second_ = zeit->tm_sec;
-
-    CalcMjd(timeNow);
-
-    double timeMjdUTC = timeNow.timeMjd_ - ((double)diffUtm / 24.);
+    double timeMjdUTC = timeTest.timeMjd_ - ((double)diffUtm / 24.);
     if (summerTime)
     {
         timeMjdUTC -= 1. / 24.;
@@ -85,7 +118,10 @@ void AstroCalc::calcRaDec(char * timeStamp, char * direction, double lon, double
 
     sidloc = (tauGreenwich + lon * DEG2RAD);
 
-//    azAlt2DeTau(azimuth * DEG2RAD, altitude * DEG2RAD, lat * DEG2RAD, dec, tau);
+    double azimuth, altitude;
+    direction2AzAlt(direction, azimuth, altitude);
+
+    azAlt2DeTau(azimuth * DEG2RAD, altitude * DEG2RAD, lat * DEG2RAD, dec, tau);
 
     ra = sidloc - tau;
     if (ra > 2 * PI)

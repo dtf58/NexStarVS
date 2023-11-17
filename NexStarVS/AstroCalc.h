@@ -35,6 +35,8 @@ private:
 	void CalcMjd(TimeOwn & t);
 	double CalcGast(double timeMjd);
 	double Modulo(double x, double y);
-
+	void timeOwnInit(char* timeStamp, TimeOwn& t);
+	void strOnlyNumbers(char* str);
+	void direction2AzAlt(char* direction, double& azimuth, double& altitude);
 };
 

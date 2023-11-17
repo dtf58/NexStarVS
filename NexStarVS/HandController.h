@@ -29,6 +29,7 @@ public:
 	String^ outSplitAngleHour(double angleHour, double factor, bool degFlag);
 	void setTracking(bool onOff);
 	void saveDeTau(String^ name);
+	void string2char(String^ strIn, char* buffer, int len);
 
 
 	bool flagSerial;

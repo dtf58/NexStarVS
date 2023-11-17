@@ -30,6 +30,7 @@ namespace CppCLRWinFormsProject {
 		setLoc->Enabled = false;
 		setTracking->Enabled = false;
 		setLmAlign->Enabled = false;
+		calcRaDe->Enabled = false;
 		trackOn = true;
 		UtmDistance->SelectedIndex = 13;
 		if (numPorts > 0)
@@ -114,6 +115,7 @@ namespace CppCLRWinFormsProject {
 			setLoc->Enabled = false;
 			setTracking->Enabled = false;
 			setLmAlign->Enabled = false;
+			calcRaDe->Enabled = false;
 			trackOn = false;
 			locOk = false;
 			timeOk = false;
@@ -173,6 +175,7 @@ namespace CppCLRWinFormsProject {
 		if (locOk && timeOk)
 		{
 			setLmAlign->Enabled = true;
+			calcRaDe->Enabled = true;
 		}
 	}
 	Void Form1::setLoc_Click(System::Object^ sender, System::EventArgs^ e)
@@ -183,6 +186,7 @@ namespace CppCLRWinFormsProject {
 		if (locOk && timeOk)
 		{
 			setLmAlign->Enabled = true;
+			calcRaDe->Enabled = true;
 		}
 	}
 

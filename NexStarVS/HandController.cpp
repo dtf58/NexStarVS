@@ -345,24 +345,8 @@ String^ HandController::calcRaDe(String^ timeStamp, String^ direction)
 	char timeStampS[32];
 	char directionS[64];
 
-	int length = timeStamp->Length;
-	if (length > 31)
-		length = 31;
-	int i;
-	for (i = 0; i < length; ++i)
-	{
-		timeStampS[i] = (char)timeStamp[i];
-	}
-	timeStampS[i] = 0;
-	length = direction->Length;
-	if (length > 63)
-		length = 63;
-	for (i = 0; i < length; ++i)
-	{
-		directionS[i] = (char)direction[i];
-	}
-	directionS[i] = 0;
-
+	string2char(timeStamp, timeStampS, sizeof(timeStampS));
+	string2char(direction, directionS, sizeof(directionS));
 
 	astroC->calcRaDec(timeStampS, directionS, locLong, locLat, diffUtm, summerTime, ra, de, sidloc, tau);
 
@@ -374,3 +358,17 @@ String^ HandController::calcRaDe(String^ timeStamp, String^ direction)
 	return strReturn;
 }
 
+void HandController::string2char(String^ strIn, char* buffer, int len)
+{
+	int length = strIn->Length;
+	if (length > len - 1)
+	{
+		length = len - 1;
+	}
+	int i = 0;
+	for (i = 0; i < length; ++i)
+	{
+		buffer[i] = (char)strIn[i];
+	}
+	buffer[i] = 0;
+}
