@@ -294,7 +294,8 @@ namespace CppCLRWinFormsProject {
 	Void Form1::setLmAlign_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		String^ lmAlign = listLandmarkAligns->Text;
-		String^ receive = hc->setLmAlign(lmAlign);
+		bool check = checkRefraction->Checked;
+		String^ receive = hc->setLmAlign(lmAlign, check);
 		OutputBox->AppendText(receive);
 		if (nullptr != outLog)
 		{
@@ -336,4 +337,16 @@ namespace CppCLRWinFormsProject {
 		}
 
 	}
+	Void Form1::calcRefr_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		String^ direction = testDirections->Text;
+		String^ receive = hc->calcRefraction(direction);
+		OutputBox->AppendText(receive);
+		if (nullptr != outLog)
+		{
+			outLog->Write(receive);
+		}
+
+	}
+
 }

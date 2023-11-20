@@ -23,8 +23,9 @@ public:
 	String^ sendAndReceive(String^ command);
 	void setTime(int ind, bool check);
 	void setLocation(String^ locTotal);
-	String^ setLmAlign(String^ lmAlign);
+	String^ setLmAlign(String^ lmAlign, bool refractionFlag);
 	String^ calcRaDe(String^ timeStamp, String^ direction);
+	String^ calcRefraction(String^ direction);
 	void splitAngle(double angle, int& grd, int& min, int& sec);
 	String^ outSplitAngleHour(double angleHour, double factor, bool degFlag);
 	void setTracking(bool onOff);

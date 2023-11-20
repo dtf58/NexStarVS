@@ -250,13 +250,17 @@ String^ HandController::outSplitAngleHour(double angleHour, double factor, bool 
 	return gcnew String(buffer);
 }
 
-String^ HandController::setLmAlign(String^ lmAlign)
+String^ HandController::setLmAlign(String^ lmAlign, bool refractionFlag)
 {
 	cli::array<wchar_t>^ sep = { ' ',';' };
 	cli::array<String^>^ subs = lmAlign->Split(sep, StringSplitOptions::RemoveEmptyEntries);
 
 	double azimuth = Convert::ToDouble(subs[0]);
 	double altitude = Convert::ToDouble(subs[1]);
+	if (refractionFlag)
+	{
+		altitude -= astroC->refraction(altitude);
+	}
 
 	double ra;
 	double de;
@@ -371,4 +375,23 @@ void HandController::string2char(String^ strIn, char* buffer, int len)
 		buffer[i] = (char)strIn[i];
 	}
 	buffer[i] = 0;
+}
+
+String^ HandController::calcRefraction(String^ direction)
+{
+	char directionS[64];
+
+	string2char(direction, directionS, sizeof(directionS));
+	double azimuth, altitude;
+	astroC->direction2AzAlt(directionS,azimuth,altitude);
+
+
+	double refr= astroC->refraction(altitude);
+
+	String^ strReturn = gcnew String("");
+
+	strReturn = String::Format("Refraction: {0}   Corr Altitude: {1}\r\n",
+		outSplitAngleHour(refr, 1., true), outSplitAngleHour(altitude+refr, 1., true));
+
+	return strReturn;
 }

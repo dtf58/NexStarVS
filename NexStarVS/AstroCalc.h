@@ -24,6 +24,9 @@ public:
 	void calcRaDec(char* timeStamp, char* direction, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec, double& sidloc, double& tau);
 	void azAlt2DeTau(double azimuth, double altitude, double latitude, double& de, double& tau);
 	void azAlt2DeTau(double azimuth, double altitude, double latitude, double& de, double& tau, double& tau1, double& tau2);
+	double refraction(double angle);
+	void strOnlyNumbers(char* str);
+	void direction2AzAlt(char* direction, double& azimuth, double& altitude);
 
 private:
 	void calcCart(double phi, double theta, double r, double V[3]);
@@ -36,7 +39,10 @@ private:
 	double CalcGast(double timeMjd);
 	double Modulo(double x, double y);
 	void timeOwnInit(char* timeStamp, TimeOwn& t);
-	void strOnlyNumbers(char* str);
-	void direction2AzAlt(char* direction, double& azimuth, double& altitude);
+	double linInterPol(double x, double x0, double x1, double f0, double f1);
+
+	double refrAngle[6];
+	double refrVal[6];
+
 };
 

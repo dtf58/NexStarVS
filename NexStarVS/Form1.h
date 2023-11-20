@@ -70,6 +70,9 @@ namespace CppCLRWinFormsProject {
 	private: System::Windows::Forms::ComboBox^ testDirections;
 	private: System::Windows::Forms::Label^ label7;
 	private: System::Windows::Forms::Button^ calcRaDe;
+	private: System::Windows::Forms::Button^ calcRefr;
+	private: System::Windows::Forms::CheckBox^ checkRefraction;
+
 
 
 
@@ -123,6 +126,8 @@ namespace CppCLRWinFormsProject {
 			this->testDirections = (gcnew System::Windows::Forms::ComboBox());
 			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->calcRaDe = (gcnew System::Windows::Forms::Button());
+			this->calcRefr = (gcnew System::Windows::Forms::Button());
+			this->checkRefraction = (gcnew System::Windows::Forms::CheckBox());
 			this->SuspendLayout();
 			// 
 			// button1
@@ -364,17 +369,39 @@ namespace CppCLRWinFormsProject {
 			// 
 			this->calcRaDe->Location = System::Drawing::Point(464, 593);
 			this->calcRaDe->Name = L"calcRaDe";
-			this->calcRaDe->Size = System::Drawing::Size(75, 23);
+			this->calcRaDe->Size = System::Drawing::Size(113, 23);
 			this->calcRaDe->TabIndex = 32;
 			this->calcRaDe->Text = L"Calc RA DE";
 			this->calcRaDe->UseVisualStyleBackColor = true;
 			this->calcRaDe->Click += gcnew System::EventHandler(this, &Form1::calcRaDe_Click);
+			// 
+			// calcRefr
+			// 
+			this->calcRefr->Location = System::Drawing::Point(464, 623);
+			this->calcRefr->Name = L"calcRefr";
+			this->calcRefr->Size = System::Drawing::Size(151, 23);
+			this->calcRefr->TabIndex = 33;
+			this->calcRefr->Text = L"Calc Refraction";
+			this->calcRefr->UseVisualStyleBackColor = true;
+			this->calcRefr->Click += gcnew System::EventHandler(this, &Form1::calcRefr_Click);
+			// 
+			// checkRefraction
+			// 
+			this->checkRefraction->AutoSize = true;
+			this->checkRefraction->Location = System::Drawing::Point(74, 435);
+			this->checkRefraction->Name = L"checkRefraction";
+			this->checkRefraction->Size = System::Drawing::Size(118, 20);
+			this->checkRefraction->TabIndex = 34;
+			this->checkRefraction->Text = L"Use Refraction";
+			this->checkRefraction->UseVisualStyleBackColor = true;
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1003, 1138);
+			this->Controls->Add(this->checkRefraction);
+			this->Controls->Add(this->calcRefr);
 			this->Controls->Add(this->calcRaDe);
 			this->Controls->Add(this->label7);
 			this->Controls->Add(this->testDirections);
@@ -419,5 +446,6 @@ namespace CppCLRWinFormsProject {
 	private: System::Void setLmAlign_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void SaveDeTau_Click(System::Object^ sender, System::EventArgs^ e);
     private: System::Void calcRaDe_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void calcRefr_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }

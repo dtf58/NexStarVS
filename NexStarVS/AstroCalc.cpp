@@ -9,6 +9,19 @@
 
 AstroCalc::AstroCalc()
 {
+    refrAngle[0] = 0.;
+    refrAngle[1] = 1.;
+    refrAngle[2] = 2.;
+    refrAngle[3] = 5.;
+    refrAngle[4] = 10.;
+    refrAngle[5] = 20.;
+    refrVal[0] = 34. / 60.;
+    refrVal[1] = 25. / 60. + 36. / 3600.;
+    refrVal[2] = 19. / 60. +  7. / 3600.;
+    refrVal[3] = 10. / 60. + 15. / 3600.;
+    refrVal[4] =  5. / 60. + 31. / 3600.;
+    refrVal[5] = refraction(20.);
+
 }
 
 AstroCalc::~AstroCalc()
@@ -326,4 +339,37 @@ double AstroCalc::Modulo(double x, double y)
 {
     double help = x / y;
     return y * (help-floor(help));
+}
+
+double AstroCalc::refraction(double angle)
+{
+    double refr = 34. / 60.;
+    if (angle > 0.)
+    {
+        if (angle >= 20.)
+        {
+            double tana = tan((90. - angle) * DEG2RAD);
+            refr = (tana / 60. - (0.06 / 3600. * tana * tana * tana));
+        }
+        else
+        {
+            int i = 0;
+            for (i = 0; i < 5; ++i)
+            {
+                if ((angle > refrAngle[i]) && (angle <= refrAngle[i + 1]))
+                {
+                    break;
+                }
+            }
+            refr = linInterPol(angle, refrAngle[i], refrAngle[i + 1], refrVal[i], refrVal[i + 1]);
+        }
+
+    }
+
+    return refr;
+}
+
+double AstroCalc::linInterPol(double x, double x0, double x1, double f0, double f1)
+{
+    return (f0 + (f1 - f0) / (x1 - x0) * (x - x0));
 }
