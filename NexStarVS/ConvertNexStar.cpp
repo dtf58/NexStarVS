@@ -84,7 +84,7 @@ double ConvertNexStar::transAngle(unsigned char* raw)
 	}
 	buf[8] = 0;
 	unsigned int val=0;
-	sscanf(buf, "%x", &val);
+	sscanf_s(buf, "%x", &val);
 
 	return (double)val / 4294967296. * 360.;
 

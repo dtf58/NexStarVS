@@ -207,6 +207,45 @@ namespace CppCLRWinFormsProject {
 		}
 	}
 
+	Void Form1::setAziAlt_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		String^ strAziAlt = aziAlt->Text;
+		bool checkRaDec = raDecGoto->Checked;
+		hc->setAziAlt(strAziAlt,checkRaDec);
+	}
+
+	Void Form1::stepUp_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		String^ step = shiftStep->Text;
+		bool trackCtrl = TrackOffOn->Checked;
+		hc->stepAziAlt(step,0, trackCtrl);
+	}
+
+	Void Form1::stepLeft_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		String^ step = shiftStep->Text;
+		bool trackCtrl = TrackOffOn->Checked;
+		hc->stepAziAlt(step, 2, trackCtrl);
+	}
+
+	Void Form1::stepRight_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		String^ step = shiftStep->Text;
+		bool trackCtrl = TrackOffOn->Checked;
+		hc->stepAziAlt(step, 3, trackCtrl);
+	}
+
+	Void Form1::stepDown_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		String^ step = shiftStep->Text;
+		bool trackCtrl = TrackOffOn->Checked;
+		hc->stepAziAlt(step, 1, trackCtrl);
+	}
+	Void Form1::stepStop_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		bool trackCtrl = TrackOffOn->Checked;
+		hc->stepAziAlt("0", 0, trackCtrl);
+	}
 
     Void Form1::openXml_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
@@ -348,5 +387,9 @@ namespace CppCLRWinFormsProject {
 		}
 
 	}
-
+	Void Form1::alignRaDec_Click(System::Object^ sender, System::EventArgs^ e)
+	{
+		String^ raDecAlign = RaDecAlign->Text;
+		hc->setRaDec(raDecAlign);
+	}
 }

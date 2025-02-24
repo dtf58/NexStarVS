@@ -4,6 +4,7 @@
    <Location longitude="11.62763" side="E" latitude="50.88877" hemis="N" name="Entry-HDW8"/>
    <Landmark azimuth="121.2658" altitude="7.7087" name="KT-Drackendorf-Balkon"/>
    <Landmark azimuth="109.5795" altitude="5.6176" name="Sat-Wuest-Balkon"/>
+   <Landmark azimuth="80.3150" altitude="1.6819" name="Laterne-Rosenst-Balkon"/>
    <TestTimeStamp>2023-11-16T17:00:00.000</TestTimeStamp>
    <TestDirection azimuth="121d04m25s" altitude="01d23m36.1s" name="Diphda"/>
    <TestDirection azimuth="00d59m30s" altitude="50d47m11.1s" name="Polaris"/>

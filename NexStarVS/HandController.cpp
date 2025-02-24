@@ -98,9 +98,11 @@ String^ HandController::sendAndReceive(String^ command)
 			case 'h': strReturn = String::Format("HC DateTime: {0,4:0000}-{1,2:00}-{2,2:00} {3,2:00}:{4,2:00}:{5,2:00} GMT+{6} SummerTime:{7}\r\n",
 				convNS->hcYear, convNS->hcMonth, convNS->hcDay, convNS->hcHour, convNS->hcMinutes, convNS->hcSeconds, convNS->hcOffsetGMT, convNS->hcSummerTime);
 				break;
-			case 'e': strReturn = String::Format("RA, DEC: {0,10:F4}, {1,10:F4}\r\n", convNS->raCurrent, convNS->decCurrent);
+			case 'e': strReturn = String::Format("RA, DEC: {0,10:F4} {1} {2,10:F4} {3}\r\n", convNS->raCurrent, outSplitAngleHour(convNS->raCurrent, 12. / 180., false), 
+				              convNS->decCurrent, outSplitAngleHour(convNS->decCurrent, 1., true));
 				break;
-			case 'z': strReturn = String::Format("AZM, ALT: {0,10:F4}, {1,10:F4}\r\n", convNS->azmCurrent, convNS->altCurrent);
+			case 'z': strReturn = String::Format("AZM, ALT: {0,10:F4} {1} {2,10:F4} {3}\r\n", convNS->azmCurrent, outSplitAngleHour(convNS->azmCurrent, 1., true),
+				          convNS->altCurrent, outSplitAngleHour(convNS->altCurrent, 1., true));
 				break;
 			case 'J': if (convNS->alignmentStatus)
 			    {
@@ -117,7 +119,6 @@ String^ HandController::sendAndReceive(String^ command)
 				convNS->longitudeCurrent, strHem, convNS->latitudeCurrent, strEw);
 				break;
 			}
-
 		}
 		else
 		{
@@ -213,6 +214,119 @@ void HandController::setLocation(String^ locTotal)
 	int length = receive(eb);
 }
 
+void HandController::gotoAziAlt(double& azimuth, double& altitude, bool checkRaDec)
+{
+	unsigned long az = (unsigned long)(azimuth / 360. * 4294967296. + 0.5);
+	if (altitude < 0.0)
+	{
+		altitude += 360.;
+	}
+	unsigned long alt = (unsigned long)(altitude / 360. * 4294967296. + 0.5);
+
+	char helpBuf[32];
+	if (checkRaDec)
+	{
+
+		sprintf_s(helpBuf, sizeof(helpBuf), "r%08x,%08x", az, alt);
+	}
+	else
+	{
+		sprintf_s(helpBuf, sizeof(helpBuf), "b%08x,%08x", az, alt);
+	}
+
+	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(32);
+	int num = 0;
+	for (;;)
+	{
+		if (helpBuf[num] == 0)
+			break;
+		sb[num] = helpBuf[num];
+		++num;
+	}
+
+	transmit(num, sb);
+	unsigned char eb[32];
+	int length = receive(eb);
+
+}
+
+void HandController::setAziAlt(String^ aziAlt, bool checkRaDec)
+{
+	char anglesBuf[64];
+
+	string2char(aziAlt, anglesBuf, sizeof(anglesBuf));
+
+	double angles1, angles2;
+
+	if (checkRaDec)
+	{
+		astroC->direction2AzAlt(anglesBuf, angles1, angles2, true);
+		gotoAziAlt(angles1, angles2, true);
+	}
+	else
+	{
+		astroC->direction2AzAlt(anglesBuf, angles1, angles2, false);
+		gotoAziAlt(angles1, angles2, false);
+	}
+
+}
+
+void HandController::setRaDec(String^ raDec)
+{
+	char raDec2000S[64];
+
+	string2char(raDec, raDec2000S, sizeof(raDec2000S));
+
+	double ra2000, de2000;
+
+	astroC->direction2AzAlt(raDec2000S, ra2000, de2000, true);
+
+	sendSync(ra2000, de2000);
+
+}
+
+void HandController::stepAziAlt(String^ step, int direction, bool trackCtrl)
+{
+	char cStep = (char) Convert::ToInt16(step);
+	if (cStep > 9)
+		cStep = 9;
+	if (0 == cStep)
+	{
+		setSlew(lastDir, 36, 0);
+		if (trackCtrl)
+		{
+			setTracking(true);
+		}
+	}
+	else
+	{
+		if (trackCtrl)
+		{
+			setTracking(false);
+		}
+		if (direction == 0)
+		{
+			lastDir = 17;
+			setSlew(17, 36, cStep);
+		}
+		if (direction == 1)
+		{
+			lastDir = 17;
+			setSlew(17, 37, cStep);
+		}
+		if (direction == 2)
+		{
+			lastDir = 16;
+			setSlew(16, 37, cStep);
+		}
+		if (direction == 3)
+		{
+			lastDir = 16;
+			setSlew(16, 36, cStep);
+		}
+	}
+}
+
 void HandController::setTracking(bool onOff)
 {
 	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(8);
@@ -227,6 +341,25 @@ void HandController::setTracking(bool onOff)
 	int length = receive(eb);
 
 }
+
+void HandController::setSlew(char dir, char dir2, char size)
+{
+	cli::array<unsigned char>^ sb = gcnew cli::array<unsigned char>(8);
+	sb[0] = 'P';
+	sb[1] = 2;
+	sb[2] = dir;
+	sb[3] = dir2;
+	sb[4] = size;
+	sb[5] = 0;
+	sb[6] = 0;
+	sb[7] = 0;
+
+	transmit(8, sb);
+	unsigned char eb[32];
+	int length = receive(eb);
+
+}
+
 
 String^ HandController::outSplitAngleHour(double angleHour, double factor, bool degFlag)
 {
@@ -250,37 +383,15 @@ String^ HandController::outSplitAngleHour(double angleHour, double factor, bool 
 	return gcnew String(buffer);
 }
 
-String^ HandController::setLmAlign(String^ lmAlign, bool refractionFlag)
+void HandController::sendSync(double& ra, double& de)
 {
-	cli::array<wchar_t>^ sep = { ' ',';' };
-	cli::array<String^>^ subs = lmAlign->Split(sep, StringSplitOptions::RemoveEmptyEntries);
-
-	double azimuth = Convert::ToDouble(subs[0]);
-	double altitude = Convert::ToDouble(subs[1]);
-	if (refractionFlag)
-	{
-		altitude -= astroC->refraction(altitude);
-	}
-
-	double ra;
-	double de;
-	double tau;
-	double sidloc;
-
-	astroC->azAlt2RaDec(azimuth, altitude, locLong, locLat, diffUtm, summerTime, ra, de, sidloc, tau);
-
-	String^ strReturn = gcnew String("");
-
-	strReturn = String::Format("RA: {0}   DE: {1}\r\nTau: {2}  LocSidTime: {3}\r\n",
-		outSplitAngleHour(ra, 12. / 180., false), outSplitAngleHour(de, 1., true), outSplitAngleHour(tau, 12. / PI, false), outSplitAngleHour(sidloc, 12. / PI, false));
-
 	if (de < 0.)
 	{
 		de += 360;
 	}
 
-	unsigned long raL =(unsigned long) (ra / 360. * 4294967296. + 0.5);
-	unsigned long deL =(unsigned long) (de / 360. * 4294967296. + 0.5);
+	unsigned long raL = (unsigned long)(ra / 360. * 4294967296. + 0.5);
+	unsigned long deL = (unsigned long)(de / 360. * 4294967296. + 0.5);
 
 	char helpBuf[32];
 	sprintf_s(helpBuf, sizeof(helpBuf), "s%08x,%08x", raL, deL);
@@ -298,6 +409,33 @@ String^ HandController::setLmAlign(String^ lmAlign, bool refractionFlag)
 	transmit(num, sb);
 	unsigned char eb[32];
 	int length = receive(eb);
+}
+
+String^ HandController::setLmAlign(String^ lmAlign, bool refractionFlag)
+{
+	cli::array<wchar_t>^ sep = { ' ',';' };
+	cli::array<String^>^ subs = lmAlign->Split(sep, StringSplitOptions::RemoveEmptyEntries);
+
+	double azimuth = Convert::ToDouble(subs[0]);
+	double altitude = Convert::ToDouble(subs[1]);
+	if (refractionFlag)
+	{
+		altitude -= astroC->refraction(altitude);
+	}
+
+	double ra2000;
+	double de2000;
+	double tau;
+	double sidloc;
+
+	astroC->azAlt2RaDec(azimuth, altitude, locLong, locLat, diffUtm, summerTime, ra2000, de2000, sidloc, tau);
+
+	String^ strReturn = gcnew String("");
+
+	strReturn = String::Format("RA: {0}   DE: {1}\r\nTau: {2}  LocSidTime: {3}\r\n",
+		outSplitAngleHour(ra2000, 12. / 180., false), outSplitAngleHour(de2000, 1., true), outSplitAngleHour(tau, 12. / PI, false), outSplitAngleHour(sidloc, 12. / PI, false));
+
+	sendSync(ra2000, de2000);
 
 	return strReturn;
 }
@@ -383,7 +521,7 @@ String^ HandController::calcRefraction(String^ direction)
 
 	string2char(direction, directionS, sizeof(directionS));
 	double azimuth, altitude;
-	astroC->direction2AzAlt(directionS,azimuth,altitude);
+	astroC->direction2AzAlt(directionS,azimuth,altitude,false);
 
 
 	double refr= astroC->refraction(altitude);

@@ -72,6 +72,27 @@ namespace CppCLRWinFormsProject {
 	private: System::Windows::Forms::Button^ calcRaDe;
 	private: System::Windows::Forms::Button^ calcRefr;
 	private: System::Windows::Forms::CheckBox^ checkRefraction;
+	private: System::Windows::Forms::TextBox^ aziAlt;
+	private: System::Windows::Forms::Button^ setAziAlt;
+	private: System::Windows::Forms::Label^ label8;
+	private: System::Windows::Forms::TextBox^ shiftStep;
+	private: System::Windows::Forms::Button^ stepLeft;
+	private: System::Windows::Forms::Button^ stepRight;
+	private: System::Windows::Forms::Button^ stepUp;
+	private: System::Windows::Forms::Button^ stepDown;
+	private: System::Windows::Forms::Label^ label9;
+	private: System::Windows::Forms::Button^ stepStop;
+	private: System::Windows::Forms::TextBox^ RaDecAlign;
+	private: System::Windows::Forms::Button^ alignRaDec;
+	private: System::Windows::Forms::Label^ label10;
+	private: System::Windows::Forms::CheckBox^ raDecGoto;
+	private: System::Windows::Forms::CheckBox^ TrackOffOn;
+
+
+
+
+
+
 
 
 
@@ -128,6 +149,21 @@ namespace CppCLRWinFormsProject {
 			this->calcRaDe = (gcnew System::Windows::Forms::Button());
 			this->calcRefr = (gcnew System::Windows::Forms::Button());
 			this->checkRefraction = (gcnew System::Windows::Forms::CheckBox());
+			this->aziAlt = (gcnew System::Windows::Forms::TextBox());
+			this->setAziAlt = (gcnew System::Windows::Forms::Button());
+			this->label8 = (gcnew System::Windows::Forms::Label());
+			this->shiftStep = (gcnew System::Windows::Forms::TextBox());
+			this->stepLeft = (gcnew System::Windows::Forms::Button());
+			this->stepRight = (gcnew System::Windows::Forms::Button());
+			this->stepUp = (gcnew System::Windows::Forms::Button());
+			this->stepDown = (gcnew System::Windows::Forms::Button());
+			this->label9 = (gcnew System::Windows::Forms::Label());
+			this->stepStop = (gcnew System::Windows::Forms::Button());
+			this->RaDecAlign = (gcnew System::Windows::Forms::TextBox());
+			this->alignRaDec = (gcnew System::Windows::Forms::Button());
+			this->label10 = (gcnew System::Windows::Forms::Label());
+			this->raDecGoto = (gcnew System::Windows::Forms::CheckBox());
+			this->TrackOffOn = (gcnew System::Windows::Forms::CheckBox());
 			this->SuspendLayout();
 			// 
 			// button1
@@ -142,7 +178,7 @@ namespace CppCLRWinFormsProject {
 			// 
 			// OutputBox
 			// 
-			this->OutputBox->Location = System::Drawing::Point(71, 781);
+			this->OutputBox->Location = System::Drawing::Point(65, 984);
 			this->OutputBox->Multiline = true;
 			this->OutputBox->Name = L"OutputBox";
 			this->OutputBox->Size = System::Drawing::Size(468, 212);
@@ -172,7 +208,7 @@ namespace CppCLRWinFormsProject {
 			// Output
 			// 
 			this->Output->AutoSize = true;
-			this->Output->Location = System::Drawing::Point(71, 762);
+			this->Output->Location = System::Drawing::Point(65, 965);
 			this->Output->Name = L"Output";
 			this->Output->Size = System::Drawing::Size(45, 16);
 			this->Output->TabIndex = 4;
@@ -212,9 +248,9 @@ namespace CppCLRWinFormsProject {
 			this->checkSummer->AutoSize = true;
 			this->checkSummer->Location = System::Drawing::Point(161, 245);
 			this->checkSummer->Name = L"checkSummer";
-			this->checkSummer->Size = System::Drawing::Size(105, 20);
+			this->checkSummer->Size = System::Drawing::Size(104, 20);
 			this->checkSummer->TabIndex = 8;
-			this->checkSummer->Text = L"Sommertime";
+			this->checkSummer->Text = L"Summertime";
 			this->checkSummer->UseVisualStyleBackColor = true;
 			// 
 			// UtmDistance
@@ -270,7 +306,7 @@ namespace CppCLRWinFormsProject {
 			// listLocation
 			// 
 			this->listLocation->FormattingEnabled = true;
-			this->listLocation->Location = System::Drawing::Point(71, 302);
+			this->listLocation->Location = System::Drawing::Point(65, 303);
 			this->listLocation->Name = L"listLocation";
 			this->listLocation->Size = System::Drawing::Size(319, 24);
 			this->listLocation->TabIndex = 21;
@@ -298,7 +334,7 @@ namespace CppCLRWinFormsProject {
 			// listLandmarkAligns
 			// 
 			this->listLandmarkAligns->FormattingEnabled = true;
-			this->listLandmarkAligns->Location = System::Drawing::Point(71, 404);
+			this->listLandmarkAligns->Location = System::Drawing::Point(65, 404);
 			this->listLandmarkAligns->Name = L"listLandmarkAligns";
 			this->listLandmarkAligns->Size = System::Drawing::Size(319, 24);
 			this->listLandmarkAligns->TabIndex = 24;
@@ -324,7 +360,7 @@ namespace CppCLRWinFormsProject {
 			// 
 			// SaveDeTau
 			// 
-			this->SaveDeTau->Location = System::Drawing::Point(738, 771);
+			this->SaveDeTau->Location = System::Drawing::Point(732, 974);
 			this->SaveDeTau->Name = L"SaveDeTau";
 			this->SaveDeTau->Size = System::Drawing::Size(132, 23);
 			this->SaveDeTau->TabIndex = 27;
@@ -334,7 +370,7 @@ namespace CppCLRWinFormsProject {
 			// 
 			// testTimeStamp
 			// 
-			this->testTimeStamp->Location = System::Drawing::Point(68, 527);
+			this->testTimeStamp->Location = System::Drawing::Point(68, 831);
 			this->testTimeStamp->Name = L"testTimeStamp";
 			this->testTimeStamp->Size = System::Drawing::Size(198, 22);
 			this->testTimeStamp->TabIndex = 28;
@@ -342,7 +378,7 @@ namespace CppCLRWinFormsProject {
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(65, 505);
+			this->label6->Location = System::Drawing::Point(65, 809);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(110, 16);
 			this->label6->TabIndex = 29;
@@ -351,7 +387,7 @@ namespace CppCLRWinFormsProject {
 			// testDirections
 			// 
 			this->testDirections->FormattingEnabled = true;
-			this->testDirections->Location = System::Drawing::Point(65, 593);
+			this->testDirections->Location = System::Drawing::Point(65, 897);
 			this->testDirections->Name = L"testDirections";
 			this->testDirections->Size = System::Drawing::Size(316, 24);
 			this->testDirections->TabIndex = 30;
@@ -359,7 +395,7 @@ namespace CppCLRWinFormsProject {
 			// label7
 			// 
 			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(65, 565);
+			this->label7->Location = System::Drawing::Point(65, 869);
 			this->label7->Name = L"label7";
 			this->label7->Size = System::Drawing::Size(97, 16);
 			this->label7->TabIndex = 31;
@@ -367,7 +403,7 @@ namespace CppCLRWinFormsProject {
 			// 
 			// calcRaDe
 			// 
-			this->calcRaDe->Location = System::Drawing::Point(464, 593);
+			this->calcRaDe->Location = System::Drawing::Point(464, 897);
 			this->calcRaDe->Name = L"calcRaDe";
 			this->calcRaDe->Size = System::Drawing::Size(113, 23);
 			this->calcRaDe->TabIndex = 32;
@@ -377,7 +413,7 @@ namespace CppCLRWinFormsProject {
 			// 
 			// calcRefr
 			// 
-			this->calcRefr->Location = System::Drawing::Point(464, 623);
+			this->calcRefr->Location = System::Drawing::Point(464, 927);
 			this->calcRefr->Name = L"calcRefr";
 			this->calcRefr->Size = System::Drawing::Size(151, 23);
 			this->calcRefr->TabIndex = 33;
@@ -395,11 +431,164 @@ namespace CppCLRWinFormsProject {
 			this->checkRefraction->Text = L"Use Refraction";
 			this->checkRefraction->UseVisualStyleBackColor = true;
 			// 
+			// aziAlt
+			// 
+			this->aziAlt->Location = System::Drawing::Point(65, 587);
+			this->aziAlt->Name = L"aziAlt";
+			this->aziAlt->Size = System::Drawing::Size(319, 22);
+			this->aziAlt->TabIndex = 35;
+			// 
+			// setAziAlt
+			// 
+			this->setAziAlt->Location = System::Drawing::Point(464, 586);
+			this->setAziAlt->Name = L"setAziAlt";
+			this->setAziAlt->Size = System::Drawing::Size(151, 23);
+			this->setAziAlt->TabIndex = 36;
+			this->setAziAlt->Text = L"Goto";
+			this->setAziAlt->UseVisualStyleBackColor = true;
+			this->setAziAlt->Click += gcnew System::EventHandler(this, &Form1::setAziAlt_Click);
+			// 
+			// label8
+			// 
+			this->label8->AutoSize = true;
+			this->label8->Location = System::Drawing::Point(72, 567);
+			this->label8->Name = L"label8";
+			this->label8->Size = System::Drawing::Size(220, 16);
+			this->label8->TabIndex = 37;
+			this->label8->Text = L"Goto Azi Alt or RA DEC (d/hms dms)";
+			// 
+			// shiftStep
+			// 
+			this->shiftStep->Location = System::Drawing::Point(68, 714);
+			this->shiftStep->Name = L"shiftStep";
+			this->shiftStep->Size = System::Drawing::Size(100, 22);
+			this->shiftStep->TabIndex = 38;
+			// 
+			// stepLeft
+			// 
+			this->stepLeft->Location = System::Drawing::Point(335, 712);
+			this->stepLeft->Name = L"stepLeft";
+			this->stepLeft->Size = System::Drawing::Size(75, 23);
+			this->stepLeft->TabIndex = 39;
+			this->stepLeft->Text = L"Left";
+			this->stepLeft->UseVisualStyleBackColor = true;
+			this->stepLeft->Click += gcnew System::EventHandler(this, &Form1::stepLeft_Click);
+			// 
+			// stepRight
+			// 
+			this->stepRight->Location = System::Drawing::Point(500, 714);
+			this->stepRight->Name = L"stepRight";
+			this->stepRight->Size = System::Drawing::Size(75, 23);
+			this->stepRight->TabIndex = 40;
+			this->stepRight->Text = L"Right";
+			this->stepRight->UseVisualStyleBackColor = true;
+			this->stepRight->Click += gcnew System::EventHandler(this, &Form1::stepRight_Click);
+			// 
+			// stepUp
+			// 
+			this->stepUp->Location = System::Drawing::Point(419, 672);
+			this->stepUp->Name = L"stepUp";
+			this->stepUp->Size = System::Drawing::Size(75, 23);
+			this->stepUp->TabIndex = 41;
+			this->stepUp->Text = L"Up";
+			this->stepUp->UseVisualStyleBackColor = true;
+			this->stepUp->Click += gcnew System::EventHandler(this, &Form1::stepUp_Click);
+			// 
+			// stepDown
+			// 
+			this->stepDown->Location = System::Drawing::Point(419, 746);
+			this->stepDown->Name = L"stepDown";
+			this->stepDown->Size = System::Drawing::Size(75, 23);
+			this->stepDown->TabIndex = 42;
+			this->stepDown->Text = L"Down";
+			this->stepDown->UseVisualStyleBackColor = true;
+			this->stepDown->Click += gcnew System::EventHandler(this, &Form1::stepDown_Click);
+			// 
+			// label9
+			// 
+			this->label9->AutoSize = true;
+			this->label9->Location = System::Drawing::Point(71, 678);
+			this->label9->Name = L"label9";
+			this->label9->Size = System::Drawing::Size(175, 16);
+			this->label9->TabIndex = 43;
+			this->label9->Text = L"Teleskop Slew with Rate 1-9";
+			// 
+			// stepStop
+			// 
+			this->stepStop->Location = System::Drawing::Point(419, 713);
+			this->stepStop->Name = L"stepStop";
+			this->stepStop->Size = System::Drawing::Size(75, 23);
+			this->stepStop->TabIndex = 44;
+			this->stepStop->Text = L"Stop";
+			this->stepStop->UseVisualStyleBackColor = true;
+			this->stepStop->Click += gcnew System::EventHandler(this, &Form1::stepStop_Click);
+			// 
+			// RaDecAlign
+			// 
+			this->RaDecAlign->Location = System::Drawing::Point(65, 511);
+			this->RaDecAlign->Name = L"RaDecAlign";
+			this->RaDecAlign->Size = System::Drawing::Size(316, 22);
+			this->RaDecAlign->TabIndex = 45;
+			// 
+			// alignRaDec
+			// 
+			this->alignRaDec->Location = System::Drawing::Point(464, 509);
+			this->alignRaDec->Name = L"alignRaDec";
+			this->alignRaDec->Size = System::Drawing::Size(151, 23);
+			this->alignRaDec->TabIndex = 46;
+			this->alignRaDec->Text = L"Set Ra/Dec Align";
+			this->alignRaDec->UseVisualStyleBackColor = true;
+			this->alignRaDec->Click += gcnew System::EventHandler(this, &Form1::alignRaDec_Click);
+			// 
+			// label10
+			// 
+			this->label10->AutoSize = true;
+			this->label10->Location = System::Drawing::Point(65, 489);
+			this->label10->Name = L"label10";
+			this->label10->Size = System::Drawing::Size(183, 16);
+			this->label10->TabIndex = 47;
+			this->label10->Text = L"Ra/Dec 2000 Align (hms dms)";
+			// 
+			// raDecGoto
+			// 
+			this->raDecGoto->AutoSize = true;
+			this->raDecGoto->Location = System::Drawing::Point(68, 627);
+			this->raDecGoto->Name = L"raDecGoto";
+			this->raDecGoto->Size = System::Drawing::Size(75, 20);
+			this->raDecGoto->TabIndex = 48;
+			this->raDecGoto->Text = L"Ra Dec";
+			this->raDecGoto->UseVisualStyleBackColor = true;
+			// 
+			// TrackOffOn
+			// 
+			this->TrackOffOn->AutoSize = true;
+			this->TrackOffOn->Location = System::Drawing::Point(68, 749);
+			this->TrackOffOn->Name = L"TrackOffOn";
+			this->TrackOffOn->Size = System::Drawing::Size(128, 20);
+			this->TrackOffOn->TabIndex = 49;
+			this->TrackOffOn->Text = L"Tracking Off - On";
+			this->TrackOffOn->UseVisualStyleBackColor = true;
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1003, 1138);
+			this->ClientSize = System::Drawing::Size(1003, 1259);
+			this->Controls->Add(this->TrackOffOn);
+			this->Controls->Add(this->raDecGoto);
+			this->Controls->Add(this->label10);
+			this->Controls->Add(this->alignRaDec);
+			this->Controls->Add(this->RaDecAlign);
+			this->Controls->Add(this->stepStop);
+			this->Controls->Add(this->label9);
+			this->Controls->Add(this->stepDown);
+			this->Controls->Add(this->stepUp);
+			this->Controls->Add(this->stepRight);
+			this->Controls->Add(this->stepLeft);
+			this->Controls->Add(this->shiftStep);
+			this->Controls->Add(this->label8);
+			this->Controls->Add(this->setAziAlt);
+			this->Controls->Add(this->aziAlt);
 			this->Controls->Add(this->checkRefraction);
 			this->Controls->Add(this->calcRefr);
 			this->Controls->Add(this->calcRaDe);
@@ -447,5 +636,12 @@ namespace CppCLRWinFormsProject {
 	private: System::Void SaveDeTau_Click(System::Object^ sender, System::EventArgs^ e);
     private: System::Void calcRaDe_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void calcRefr_Click(System::Object^ sender, System::EventArgs^ e);
+    private: System::Void setAziAlt_Click(System::Object^ sender, System::EventArgs^ e); 
+    private: System::Void stepUp_Click(System::Object^ sender, System::EventArgs^ e);
+    private: System::Void stepLeft_Click(System::Object^ sender, System::EventArgs^ e);
+    private: System::Void stepRight_Click(System::Object^ sender, System::EventArgs^ e);
+    private: System::Void stepDown_Click(System::Object^ sender, System::EventArgs^ e);
+    private: System::Void stepStop_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void alignRaDec_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }

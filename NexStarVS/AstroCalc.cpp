@@ -29,7 +29,7 @@ AstroCalc::~AstroCalc()
 
 }
 
-void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec, double& sidloc, double& tau)
+void AstroCalc::getTimeNow(TimeOwn& timeNow)
 {
     struct tm zeit;
     __time64_t sec;
@@ -37,16 +37,22 @@ void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double 
     _time64(&sec);
     _localtime64_s(&zeit, &sec);
 
-    TimeOwn timeNow;
-
     timeNow.year_ = zeit.tm_year - 100 + 2000;
     timeNow.day_ = zeit.tm_mday;
-    timeNow.month_ = zeit.tm_mon+1;
+    timeNow.month_ = zeit.tm_mon + 1;
     timeNow.hour_ = zeit.tm_hour;
     timeNow.minute_ = zeit.tm_min;
     timeNow.second_ = zeit.tm_sec;
 
     CalcMjd(timeNow);
+}
+
+void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double lat, int diffUtm, bool summerTime, double& ra2000, double& dec2000, double& sidloc, double& tau)
+{
+
+    TimeOwn timeNow;
+
+    getTimeNow(timeNow);
 
     double timeMjdUTC = timeNow.timeMjd_ - ((double)diffUtm / 24. );
     if (summerTime)
@@ -56,6 +62,8 @@ void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double 
     double tauGreenwich = CalcGast(timeMjdUTC);
 
     sidloc = (tauGreenwich + lon * DEG2RAD);
+
+    double ra, dec;
 
     azAlt2DeTau(azimuth * DEG2RAD, altitude * DEG2RAD, lat * DEG2RAD, dec, tau);
 
@@ -69,15 +77,17 @@ void AstroCalc::azAlt2RaDec(double azimuth, double altitude, double lon, double 
         ra += 2 * PI;
     }
 
-    ra *= RAD2DEG;
-    dec *= RAD2DEG;
+    calcRaDec2000(ra, dec, ra2000, dec2000);
+
+    ra2000 *= RAD2DEG;
+    dec2000 *= RAD2DEG;
 }
 
 void AstroCalc::strOnlyNumbers(char* str)
 {
     for (int i = 0; i < strlen(str); ++i)
     {
-        if (!((str[i] >= 48 && str[i] <= 57) || str[i] == '.'))
+        if (!((str[i] >= 48 && str[i] <= 57) || str[i] == '.' || str[i] == '-' || str[i] == '+') )
         {
             str[i] = ' ';
         }
@@ -102,7 +112,7 @@ void AstroCalc::timeOwnInit(char* timeStamp, TimeOwn& t)
     CalcMjd(t);
 }
 
-void AstroCalc::direction2AzAlt(char* direction, double& azimuth, double& altitude)
+void AstroCalc::direction2AzAlt(char* direction, double& azimuth, double& altitude, bool hourFlag)
 {
     strOnlyNumbers(direction);
     
@@ -111,9 +121,110 @@ void AstroCalc::direction2AzAlt(char* direction, double& azimuth, double& altitu
 
     sscanf_s(direction, "%d %d %le %d %d %le", &azD, &azM, &azS, &altD, &altM, &altS);
 
-    azimuth = (double)azD + (double)azM / 60. + azS / 3600.;
+    if (hourFlag)
+    {
+        azimuth = ((double)azD + (double)azM / 60. + azS / 3600.) / 24. * 360.;
+    }
+    else
+    {
+        azimuth = (double)azD + (double)azM / 60. + azS / 3600.;
+    }
+    bool negFlag = false;
+    if (altD < 0.)
+    {
+        negFlag = true;
+        altD = -altD;
+    }
     altitude = (double)altD + (double)altM / 60. + altS / 3600.;
+    if (negFlag)
+    {
+        altitude = -altitude;
+    }
+}
 
+void AstroCalc::NutMatrix(double T, double m[3][3])
+{
+    double  ls, D, F, N;
+    double  eps, dpsi, deps;
+    double m1[3][3], m2[3][3], m3[3][3], m4[3][3];
+    //   int i,j;
+    ls = 2. * PI * Frac(0.993133 + 99.997306 * T);   // Mittlere Anomalie der Sonne
+    D = 2. * PI * Frac(0.827362 + 1236.853087 * T);   // Laengendifferenz Sonne-Mond
+    F = 2. * PI * Frac(0.259089 + 1342.227826 * T);   // Mittleres Argument der Breite
+    N = 2. * PI * Frac(0.347346 - 5.372447 * T);   // Laenge des aufsteigenden Knotens
+
+    dpsi = (-17.200 * sin(N) - 1.319 * sin(2 * (F - D + N)) - 0.227 * sin(2 * (F + N))
+        + 0.206 * sin(2 * N) + 0.143 * sin(ls)) / ARCS;
+    deps = (+9.203 * cos(N) + 0.574 * cos(2 * (F - D + N)) + 0.098 * cos(2 * (F + N))
+        - 0.090 * cos(2 * N)) / ARCS;
+
+    eps = 0.4090928 - 2.2696E-4 * T;            // Mittlere Schiefe der Ekliptik
+
+    Rot_x(-eps - deps, m1);
+    Rot_z(-dpsi, m2);
+    Rot_x(+eps, m3);
+
+    matrixProduct(m1, m2, m4);
+    matrixProduct(m4, m3, m);
+}
+
+void AstroCalc::PrecMatrix_Equ(double T1, double T2, double m[3][3])
+{
+    double dT;
+    double zeta, z, theta;
+    double m1[3][3], m2[3][3], m3[3][3], m4[3][3];
+
+    dT = T2 - T1;
+    zeta = ((2306.2181 + (1.39656 - 0.000139 * T1) * T1) +
+        ((0.30188 - 0.000344 * T1) + 0.017998 * dT) * dT) * dT / ARCS;
+    z = zeta + ((0.79280 + 0.000411 * T1) + 0.000205 * dT) * dT * dT / ARCS;
+    theta = ((2004.3109 - (0.85330 + 0.000217 * T1) * T1) -
+        ((0.42665 + 0.000217 * T1) + 0.041833 * dT) * dT) * dT / ARCS;
+
+    Rot_z(-z, m1);
+    Rot_y(theta, m2);
+    Rot_z(-zeta, m3);
+
+    matrixProduct(m1, m2, m4);
+    matrixProduct(m4, m3, m);
+}
+
+
+void AstroCalc::KalkPN(double t)
+{
+    double m1[3][3], m2[3][3];
+
+    NutMatrix((t - 51544.5) / 36525., m1);
+    PrecMatrix_Equ(0.0, (t - 51544.5) / 36525., m2);
+    matrixProduct(m1, m2, pn_);
+}
+
+void AstroCalc::matrixTransposition(double m1[3][3], double m2[3][3])
+{
+    int i, j;
+
+    for (i = 0; i < 3; i++)
+        for (j = 0; j < 3; j++)
+            m2[i][j] = m1[j][i];
+}
+
+void AstroCalc::calcRaDec2000(double& ra, double& dec, double& ra2000, double& dec2000)
+{
+
+    TimeOwn timeNow;
+    getTimeNow(timeNow);
+
+    KalkPN(timeNow.timeMjd_);
+    double vec[3];
+    calcCart(ra, dec, 1., vec);
+
+    double hv[3];
+    double pnT[3][3];
+    matrixTransposition(pn_, pnT);
+    matrixVecMult(pnT, vec, hv);
+
+    double r;
+    calcPolarAngles(hv, ra2000, dec2000, r);
 }
 
 void AstroCalc::calcRaDec(char * timeStamp, char * direction, double lon, double lat, int diffUtm, bool summerTime, double& ra, double& dec, double& sidloc, double& tau)
@@ -132,7 +243,7 @@ void AstroCalc::calcRaDec(char * timeStamp, char * direction, double lon, double
     sidloc = (tauGreenwich + lon * DEG2RAD);
 
     double azimuth, altitude;
-    direction2AzAlt(direction, azimuth, altitude);
+    direction2AzAlt(direction, azimuth, altitude, false);
 
     azAlt2DeTau(azimuth * DEG2RAD, altitude * DEG2RAD, lat * DEG2RAD, dec, tau);
 
@@ -335,10 +446,14 @@ double AstroCalc::CalcGast(double timeMjd)
     return tau;
 }
 
+double AstroCalc::Frac(double x)
+{
+    return x - floor(x);
+}
+
 double AstroCalc::Modulo(double x, double y)
 {
-    double help = x / y;
-    return y * (help-floor(help));
+    return y * Frac(x / y);
 }
 
 double AstroCalc::refraction(double angle)
@@ -372,4 +487,21 @@ double AstroCalc::refraction(double angle)
 double AstroCalc::linInterPol(double x, double x0, double x1, double f0, double f1)
 {
     return (f0 + (f1 - f0) / (x1 - x0) * (x - x0));
+}
+
+void AstroCalc::matrixProduct(double mat1[3][3], double mat2[3][3], double matOut[3][3])
+{
+    int i, j, l;
+    double s;
+
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            s = 0.;
+            for (l = 0; l < 3; l++)
+                s += mat1[i][l] * mat2[l][j];
+            matOut[i][j] = s;
+        }
+    }
 }

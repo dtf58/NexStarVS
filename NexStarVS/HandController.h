@@ -23,14 +23,20 @@ public:
 	String^ sendAndReceive(String^ command);
 	void setTime(int ind, bool check);
 	void setLocation(String^ locTotal);
+	void gotoAziAlt(double& azimuth, double& altitude, bool checkRaDec);
+	void setAziAlt(String^ aziAlt, bool checkRaDec);
+	void setRaDec(String^ raDec);
+	void stepAziAlt(String^ step, int direction, bool trackCtrl);
 	String^ setLmAlign(String^ lmAlign, bool refractionFlag);
 	String^ calcRaDe(String^ timeStamp, String^ direction);
 	String^ calcRefraction(String^ direction);
 	void splitAngle(double angle, int& grd, int& min, int& sec);
 	String^ outSplitAngleHour(double angleHour, double factor, bool degFlag);
 	void setTracking(bool onOff);
+	void setSlew(char dir, char dir2, char size);
 	void saveDeTau(String^ name);
 	void string2char(String^ strIn, char* buffer, int len);
+	void sendSync(double& ra, double& de);
 
 
 	bool flagSerial;
@@ -40,6 +46,7 @@ public:
 	int diffUtm;
 	double locLong;
 	double locLat;
+	char lastDir;
 
 	ConvertNexStar* convNS;
 	AstroCalc* astroC;
